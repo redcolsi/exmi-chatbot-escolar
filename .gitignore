@@ -1,0 +1,27 @@
+# Claves y configuracion privada
+.env
+.env.*
+!.env.example
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+env/
+
+# Bases de datos locales
+*.db
+*.sqlite
+*.sqlite3
+
+# Archivos temporales
+.DS_Store
+Thumbs.db
+
+# Dependencias del frontend
+node_modules/
+
+# Archivos de compilacion
+dist/
+build/
