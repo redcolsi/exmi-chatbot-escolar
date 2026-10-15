@@ -29,16 +29,18 @@ def run_seed() -> None:
 
     try:
         # ── Usuario administrador (docente) ───────────────────────
-        if not db.query(User).filter(User.email == "admin@einstein.edu").first():
+        # Idempotente por email O username (evita duplicar 'admin')
+        from sqlalchemy import or_ as _or
+        if not db.query(User).filter(_or(User.email == "admin@einstein.edu", User.username == "admin")).first():
             db.add(User(
                 email="admin@einstein.edu",
                 username="admin",
                 hashed_password=hash_password("einstein2024"),
                 role="admin",
             ))
-            print("  ✅ Usuario admin creado  →  admin@einstein.edu / einstein2024")
+            print("  Usuario admin creado  ->  admin@einstein.edu / einstein2024")
         else:
-            print("  ⏭  Usuario admin ya existe")
+            print("  Usuario admin ya existe")
 
         # ── Base de conocimiento ──────────────────────────────────
         if db.query(KnowledgeBase).count() == 0:

@@ -1,0 +1,23 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "functions": {
+    "api/index.py": {
+      "maxDuration": 30,
+      "memory": 1024
+    }
+  },
+  "routes": [
+    { "src": "/uploads/(.*)", "dest": "/api/index.py" },
+    { "src": "/auth/(.*)", "dest": "/api/index.py" },
+    { "src": "/chat/(.*)", "dest": "/api/index.py" },
+    { "src": "/admin/(.*)", "dest": "/api/index.py" },
+    { "src": "/public/(.*)", "dest": "/api/index.py" },
+    { "src": "/docs(.*)", "dest": "/api/index.py" },
+    { "src": "/redoc(.*)", "dest": "/api/index.py" },
+    { "src": "/openapi.json", "dest": "/api/index.py" },
+    { "src": "/health(.*)", "dest": "/api/index.py" },
+    { "src": "/api/(.*)", "dest": "/api/index.py" },
+    { "src": "/connection-test", "dest": "/api/index.py" },
+    { "src": "/(.*)", "dest": "/api/index.py" }
+  ]
+}

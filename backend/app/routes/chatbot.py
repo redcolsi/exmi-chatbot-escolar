@@ -98,8 +98,10 @@ async def chat(
         fuente = "Error"
 
     finally:
-        # ── Paso 3: Persistir en historial ───────────────────────
+        # ── Paso 3: Persistir en historial (SQLite, base principal) ──
         elapsed = round(time.perf_counter() - start, 3)
+
+        # SQLite (base principal: local exmi.db o Supabase Postgres en Vercel)
         try:
             crud.create_chat_history(
                 db=db,
@@ -109,9 +111,9 @@ async def chat(
                 fuente=fuente,
                 tiempo_respuesta=elapsed,
             )
-            logger.debug("[chatbot] Historial guardado (%.3f s)", elapsed)
+            logger.debug("[chatbot] Historial guardado en BD (%.3f s)", elapsed)
         except Exception as hist_exc:  # noqa: BLE001
-            # No dejar que un fallo en el historial afecte la respuesta al usuario
-            logger.warning("[chatbot] No se pudo guardar historial: %s", hist_exc)
+            logger.warning("[chatbot] No se pudo guardar en BD: %s", hist_exc)
 
     return ChatResponse(respuesta=respuesta, fuente=fuente)
+

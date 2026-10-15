@@ -1,0 +1,15 @@
+backend/exmi.db
+backend/.env
+backend/__pycache__/
+backend/app/__pycache__/
+**/__pycache__/
+**/*.pyc
+backend/uploads/
+uploads/
+*.db
+.git/
+.venv/
+venv/
+backend/venv/
+backend/.venv/
+backend/app/documents/*.pdf
