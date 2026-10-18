@@ -234,7 +234,15 @@ def root():
 @app.get("/health", tags=["Info"])
 def health():
     """Verificación rápida del servidor, incluida la conexión a la base de datos."""
-    db_info: Dict[str, Any] = {}
+    db_info: Dict[str, Any] = {
+        # Nunca se expone la contraseña: solo host, puerto y usuario.
+        "host": DATABASE_URL.split("@")[-1].split("/")[0] if "@" in DATABASE_URL else "sqlite",
+        "esquema": "postgres" if IS_POSTGRES else "sqlite",
+        "variables_presentes": [
+            n for n in ("DATABASE_URL", "DATABASE_URL_POSTGRES")
+            if os.getenv(n)
+        ],
+    }
     try:
         from sqlalchemy import text
 
@@ -243,9 +251,10 @@ def health():
             db.execute(text("SELECT 1"))
         finally:
             db.close()
-        db_info = {"conectada": True, "tipo": "postgres" if IS_POSTGRES else "sqlite"}
+        db_info["conectada"] = True
     except Exception as exc:
-        db_info = {"conectada": False, "error": f"{type(exc).__name__}: {exc}"[:300]}
+        db_info["conectada"] = False
+        db_info["error"] = f"{type(exc).__name__}: {exc}"[:300]
 
     return {"status": "ok", "bd": db_info}
 
