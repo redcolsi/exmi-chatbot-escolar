@@ -89,9 +89,23 @@ def _init_database() -> None:
 _init_database()
 logger.info("BD inicializada. DATABASE_URL=%s", DATABASE_URL)
 
-# ── Crear directorios de uploads ──────────────────────────────
-# En Vercel solo /tmp es escribible.
-UPLOAD_DIR: str = os.getenv("UPLOAD_DIR", "/tmp/uploads" if IS_VERCEL else "uploads")
+# ── Directorio de archivos subidos ─────────────────────────────
+# En Vercel (serverless) el sistema de archivos es de SOLO LECTURA salvo /tmp.
+# Si UPLOAD_DIR apunta a una ruta relativa, cualquier subida fallaría con
+# "Read-only file system". Por eso en Vercel se fuerza /tmp aunque la variable
+# diga otra cosa; el valor por defecto solo aplica fuera de Vercel.
+if IS_VERCEL:
+    _subido = os.getenv("UPLOAD_DIR", "")
+    UPLOAD_DIR = _subido if _subido.startswith("/tmp") else "/tmp/uploads"
+    if _subido and not _subido.startswith("/tmp"):
+        logger.warning(
+            "UPLOAD_DIR=%r no es escribible en Vercel; se usa /tmp/uploads. "
+            "Las imagenes subidas no persisten entre despliegues.",
+            _subido,
+        )
+else:
+    UPLOAD_DIR = os.getenv("UPLOAD_DIR", "uploads")
+
 for subdir in ("imagenes", "documentos"):
     try:
         os.makedirs(os.path.join(UPLOAD_DIR, subdir), exist_ok=True)

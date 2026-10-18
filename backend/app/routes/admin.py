@@ -52,8 +52,18 @@ router = APIRouter(
     dependencies=[Depends(require_admin)],
 )
 
-UPLOAD_DIR: str = os.getenv("UPLOAD_DIR", "uploads")
-DOCUMENTS_DIR = Path(__file__).resolve().parents[1] / "documents"
+IS_VERCEL: bool = os.getenv("VERCEL") == "1" or bool(os.getenv("VERCEL_ENV"))
+
+# En Vercel el sistema de archivos es de solo lectura salvo /tmp: guardar en una
+# ruta del repositorio lanzaba "Read-only file system" y rompía la subida de
+# imágenes y la importación de documentos (HTTP 500).
+_subido = os.getenv("UPLOAD_DIR", "")
+UPLOAD_DIR: str = (
+    _subido if not IS_VERCEL or _subido.startswith("/tmp") else "/tmp/uploads"
+)
+DOCUMENTS_DIR: Path = (
+    Path("/tmp/documents") if IS_VERCEL else Path(__file__).resolve().parents[1] / "documents"
+)
 
 MAX_IMAGE_BYTES = 5 * 1024 * 1024
 MAX_JSON_BYTES = 10 * 1024 * 1024
