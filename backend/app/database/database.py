@@ -73,6 +73,13 @@ def _resolve_database_url() -> str:
 DATABASE_URL: str = _resolve_database_url()
 IS_POSTGRES: bool = DATABASE_URL.startswith("postgresql")
 
+# SQLAlchemy 2.1 usa el driver `psycopg` (v3) por defecto para postgresql://.
+# Aquí el driver instalado es psycopg2 (v2), así que se fija el dialecto de forma
+# explícita con el prefijo +psycopg2. Sin esto, Vercel responde
+# ModuleNotFoundError: No module named 'psycopg' y la app no arranca.
+if IS_POSTGRES and DATABASE_URL.startswith("postgresql://"):
+    DATABASE_URL = "postgresql+psycopg2://" + DATABASE_URL[len("postgresql://"):]
+
 
 def _sanitize_dsn(url: str) -> str:
     """
@@ -112,7 +119,7 @@ def _sanitize_dsn(url: str) -> str:
             limpio += ("&" if "?" in limpio else "?") + "sslmode=require"
         return limpio
     except Exception as exc:  # noqa: BLE001
-        return f"postgresql://ERROR_DSN:{type(exc).__name__}@localhost/dummy"
+        return f"postgresql+psycopg2://ERROR_DSN:{type(exc).__name__}@localhost/dummy"
 
 
 logger = logging.getLogger(__name__)
