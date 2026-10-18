@@ -22,6 +22,7 @@ Orden de prioridad para DATABASE_URL:
 Supabase = PostgreSQL estándar: los modelos actuales (Integer/Text/DateTime)
 son compatibles sin cambios. El seed es idempotente.
 """
+import logging
 import os
 import re
 
@@ -113,12 +114,20 @@ def _sanitize_dsn(url: str) -> str:
 if IS_POSTGRES:
     # Serverless (Vercel): NullPool evita conexiones colgadas entre invocaciones.
     _dsn = _sanitize_dsn(DATABASE_URL)
-    engine = create_engine(
-        _dsn,
-        poolclass=NullPool,
-        pool_pre_ping=True,
-        connect_args={"sslmode": "require", "connect_timeout": 10},
-    )
+    try:
+        engine = create_engine(
+            _dsn,
+            poolclass=NullPool,
+            pool_pre_ping=True,
+            connect_args={"sslmode": "require", "connect_timeout": 10},
+        )
+    except Exception as exc:  # noqa: BLE001
+        # Sin esto, un DSN inválido aborta la importación y Vercel responde
+        # FUNCTION_INVOCATION_FAILED (500) sin ningún log que explique la causa.
+        logging.getLogger(__name__).critical(
+            "DATABASE_URL no válida: %s: %s", type(exc).__name__, exc
+        )
+        raise
 else:
     # SQLite necesita check_same_thread=False para FastAPI (async requests)
     engine = create_engine(DATABASE_URL, connect_args={"check_same_thread": False})
