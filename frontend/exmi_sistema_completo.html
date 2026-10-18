@@ -2262,8 +2262,9 @@ function toast(msg, type = 'success'){
    INICIALIZACIÓN
 ═══════════════════════════════════════════════════════════════ */
 window.addEventListener('load', async () => {
-  // Apariencia pública (todos los visitantes) y, si hay sesión, datos del panel
-  await Promise.all([ loadUIConfig(), ACCESS_TOKEN ? syncInstitutionalData(false) : Promise.resolve() ]);
+  // Apariencia y datos institucionales: todos los visitantes (endpoints /public/*,
+  // sin login). El guard de sesión ya no aplica: no se usa /admin/data.
+  await Promise.all([ loadUIConfig(), syncInstitutionalData(false) ]);
   applyUIConfig();
   showScreen('chat');
   setTimeout(() => {
