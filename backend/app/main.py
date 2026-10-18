@@ -25,7 +25,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 
-from app.database.database import engine, SessionLocal, DATABASE_URL, IS_POSTGRES
+from app.database.database import engine, SessionLocal, DATABASE_URL, IS_POSTGRES, DB_ERROR
 from app.models.models import Base
 from app.models.document import Document, DocumentChunk  # noqa: F401 — registra tablas del RAG documental
 
@@ -243,6 +243,8 @@ def health():
             if os.getenv(n)
         ],
     }
+    if DB_ERROR:
+        db_info["error_postgres"] = DB_ERROR
     try:
         from sqlalchemy import text
 

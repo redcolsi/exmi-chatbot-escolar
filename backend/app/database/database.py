@@ -34,6 +34,10 @@ from dotenv import load_dotenv
 load_dotenv()
 
 
+def _IS_VERCEL_ENV() -> bool:
+    return os.getenv("VERCEL") == "1" or bool(os.getenv("VERCEL_ENV"))
+
+
 def _resolve_database_url() -> str:
     """
     Obtiene la URL de la base de datos.
@@ -47,7 +51,7 @@ def _resolve_database_url() -> str:
 
     Así el .env de desarrollo sigue mandando, y en producción se prefiera el pooler.
     """
-    if os.getenv("VERCEL") == "1" or os.getenv("VERCEL_ENV"):
+    if _IS_VERCEL_ENV():
         nombres = ("DATABASE_URL_POSTGRES", "DATABASE_URL")
     else:
         nombres = ("DATABASE_URL", "DATABASE_URL_POSTGRES")
@@ -111,26 +115,47 @@ def _sanitize_dsn(url: str) -> str:
         return f"postgresql://ERROR_DSN:{type(exc).__name__}@localhost/dummy"
 
 
-if IS_POSTGRES:
-    # Serverless (Vercel): NullPool evita conexiones colgadas entre invocaciones.
-    _dsn = _sanitize_dsn(DATABASE_URL)
+logger = logging.getLogger(__name__)
+
+#: Detalle del error de Postgres, si hubo. Lo consulta /health para diagnosticar
+#: sin depender de los logs de Vercel (que salen vacíos cuando la función muere
+#: durante la importación del módulo).
+DB_ERROR: str | None = None
+
+
+def _build_engine():
+    """Crea el engine de Postgres; si falla, registra el motivo y devuelve None."""
     try:
-        engine = create_engine(
-            _dsn,
+        return create_engine(
+            _sanitize_dsn(DATABASE_URL),
             poolclass=NullPool,
             pool_pre_ping=True,
             connect_args={"sslmode": "require", "connect_timeout": 10},
         )
     except Exception as exc:  # noqa: BLE001
-        # Sin esto, un DSN inválido aborta la importación y Vercel responde
-        # FUNCTION_INVOCATION_FAILED (500) sin ningún log que explique la causa.
-        logging.getLogger(__name__).critical(
-            "DATABASE_URL no válida: %s: %s", type(exc).__name__, exc
+        global DB_ERROR
+        DB_ERROR = f"{type(exc).__name__}: {exc}"[:300]
+        logger.critical("No se pudo crear el engine de Postgres: %s", DB_ERROR)
+        return None
+
+
+if IS_POSTGRES:
+    # Serverless (Vercel): NullPool evita conexiones colgadas entre invocaciones.
+    engine = _build_engine()
+    if engine is None:
+        # La disponibilidad del sitio importa más que la persistencia: si Postgres
+        # no es alcanzable, se sigue sirviendo con SQLite en /tmp (efímero, pero
+        # funcional) en lugar de devolver 500 en todos los endpoints.
+        logger.error("Postgres no disponible; se usa SQLite temporal como respaldo.")
+        IS_POSTGRES = False
+        engine = create_engine(
+            "sqlite:////tmp/exmi.db" if _IS_VERCEL_ENV() else "sqlite:///./exmi.db",
+            connect_args={"check_same_thread": False},
         )
-        raise
 else:
     # SQLite necesita check_same_thread=False para FastAPI (async requests)
     engine = create_engine(DATABASE_URL, connect_args={"check_same_thread": False})
+
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 Base = declarative_base()
 
