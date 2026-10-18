@@ -57,6 +57,8 @@
   stroke:currentColor;stroke-width:1.9;
   stroke-linecap:round;stroke-linejoin:round;
 }
+/* Cuando el svg ya trae .ico-inline, manda su tamaño en em. */
+.ico>svg.ico-inline,.ic>svg.ico-inline{width:15px;height:15px;}
 .ic-lg svg{width:26px;height:26px;}
 .avatar-ring svg,.bot-avatar svg,.avatar-preview svg{width:42px;height:42px;stroke-width:1.7;}
 html,body{height:100%;font-family:var(--font);background:var(--chat-bg);color:var(--text);overflow:hidden;}
@@ -674,8 +676,15 @@ mark{background:#c8102e30;color:var(--gold);border-radius:2px;}
 }
 
 /* Iconos insertados dentro de etiquetas */
-.ico-inline{width:1em;height:1em;display:inline-block;vertical-align:-.12em;}
-.ico-inline svg{width:100%;height:100%;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round;}
+/* Iconos insertados dentro de etiquetas.
+   OJO: el <svg> LLEVA la clase, no la contiene. El selector debe ser
+   `svg.ico-inline`; con `.ico-inline svg` no se aplicaba y los iconos salian
+   con el fill negro por defecto (invisibles sobre fondo oscuro). */
+svg.ico-inline{
+  width:1em;height:1em;display:inline-block;vertical-align:-.12em;
+  fill:none;stroke:currentColor;stroke-width:1.9;
+  stroke-linecap:round;stroke-linejoin:round;
+}
 
 /* Scrollbar global */
 ::-webkit-scrollbar{width:5px;height:5px;}

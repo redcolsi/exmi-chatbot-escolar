@@ -3,24 +3,49 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Exmi — Acceso Jurados</title>
+<title>Exmi — Acceso al chatbot</title>
 <style>
-body{font-family:system-ui,sans-serif;background:#0a0e17;color:#e2e8f0;display:flex;align-items:center;justify-content:center;min-height:100vh;margin:0}
-.card{background:#111827;border:1px solid #2a3650;border-radius:16px;padding:32px;max-width:420px;text-align:center}
-img{width:260px;height:260px;background:#fff;border-radius:12px;padding:8px}
-a{color:#f5a623;word-break:break-all}
-.btn{display:inline-block;margin-top:16px;background:#f5a623;color:#000;font-weight:700;padding:12px 20px;border-radius:10px;text-decoration:none}
-small{color:#94a3b8}
+  body{
+    font-family:system-ui,-apple-system,"Segoe UI",sans-serif;
+    background:#0d1420;color:#e2e8f0;
+    display:flex;align-items:center;justify-content:center;
+    min-height:100vh;margin:0;padding:20px;
+  }
+  .card{
+    background:#131d2e;border:1px solid #27364f;border-radius:16px;
+    padding:32px 28px;max-width:420px;width:100%;text-align:center;
+  }
+  h1{font-size:20px;margin:0 0 4px}
+  .sub{color:#94a3b8;font-size:13px;margin:0 0 20px}
+  .marco{
+    background:#fff;border-radius:12px;padding:10px;
+    display:inline-block;margin-bottom:16px;
+  }
+  .marco img{width:250px;height:250px;display:block}
+  a.enlace{color:#c8102e;word-break:break-all;font-size:13px;text-decoration:none}
+  .btn{
+    display:inline-block;margin-top:16px;background:#c8102e;color:#fff;
+    font-weight:700;padding:13px 22px;border-radius:10px;text-decoration:none;
+  }
+  small{display:block;color:#94a3b8;font-size:12px;line-height:1.7;margin-top:18px}
 </style>
 </head>
 <body>
 <div class="card">
-<h2>Exmi — Colegio Albert Einstein</h2>
-<p>Escanea el QR para abrir el chatbot:</p>
-<img src="qr-chatbot.png" alt="QR acceso al chatbot Exmi"/>
-<p><a href="https://exmi-colegio.vercel.app">https://exmi-colegio.vercel.app</a></p>
-<a class="btn" href="https://exmi-colegio.vercel.app">Abrir chatbot</a>
-<p><small>Usuario demo jurado: usa el chat público sin login.<br/>Acceso docente: credenciales entregadas por el colegio.<br/>Local: http://127.0.0.1:8000/</small></p>
+  <h1>Exmi — Colegio Albert Einstein</h1>
+  <p class="sub">Asistente escolar · Cúcuta, Colombia</p>
+
+  <div class="marco">
+    <img src="qr-chatbot.png" alt="QR para abrir el chatbot de Exmi"/>
+  </div>
+
+  <a class="enlace" href="https://exmi-colegio.vercel.app">exmi-colegio.vercel.app</a><br/>
+  <a class="btn" href="https://exmi-colegio.vercel.app">Abrir chatbot</a>
+
+  <small>
+    El chatbot es público: no necesita contraseña.<br/>
+    Acceso docente: credenciales entregadas por el colegio.
+  </small>
 </div>
 </body>
 </html>
