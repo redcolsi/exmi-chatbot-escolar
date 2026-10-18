@@ -3,17 +3,28 @@ Configuración de la base de datos SQLAlchemy.
 
 Orden de prioridad para DATABASE_URL:
   1. `DATABASE_URL` explícita (local .env o env Vercel).
-     - Supabase (pooler recomendado en Vercel serverless, puerto 6543):
-       postgresql://postgres.[REF]:[PASSWORD]@aws-0-[region].pooler.supabase.com:6543/postgres?pgbouncer=true
+     - Supabase, Session pooler (puerto 6543, recomendado en serverless):
+
+         postgresql://postgres.[REF]:[PASSWORD]@aws-0-[REGION].pooler.supabase.com:6543/postgres?sslmode=require
+
+       IMPORTANTE: el parámetro `?pgbouncer=true` que aparece en algunos ejemplos
+       de Supabase NO es una opción válida de psycopg2. Provoca un
+       `invalid connection option "pgbouncer"` al importar este módulo y tumba
+       toda la aplicación (500 en todos los endpoints). Usar `?sslmode=require`.
      - Supabase directa (puerto 5432):
-       postgresql://postgres:[PASSWORD]@db.[REF].supabase.co:5432/postgres
+
+         postgresql://postgres:[PASSWORD]@db.[REF].supabase.co:5432/postgres?sslmode=require
   2. En Vercel sin DATABASE_URL: sqlite:////tmp/exmi.db (solo /tmp es escribible).
+     OJO: esa base es efímera; se pierde en cada arranque en frío. Para producción
+     hace falta una DATABASE_URL real (por ejemplo, Supabase).
   3. Local sin DATABASE_URL: sqlite:///./exmi.db (desarrollo offline).
 
 Supabase = PostgreSQL estándar: los modelos actuales (Integer/Text/DateTime)
 son compatibles sin cambios. El seed es idempotente.
 """
 import os
+import re
+
 from sqlalchemy import create_engine
 from sqlalchemy.orm import declarative_base, sessionmaker   # ← declarative_base movido a orm en SQLAlchemy 2.x
 from sqlalchemy.pool import NullPool
@@ -40,9 +51,16 @@ IS_POSTGRES: bool = DATABASE_URL.startswith("postgresql")
 
 if IS_POSTGRES:
     # Serverless (Vercel): NullPool evita conexiones colgadas entre invocaciones.
-    # Supabase exige SSL; la pooler de Supabase usa sslmode=require.
+    # Supabase exige SSL. Se normaliza el DSN por si viene con `pgbouncer=true`
+    # (no es una opción válida de psycopg2 y rompe la importación del módulo).
+    _dsn = DATABASE_URL
+    _dsn = re.sub(r"[?&]pgbouncer=true", "", _dsn)
+    _dsn = re.sub(r"[?&]pgmode=\w+", "", _dsn)
+    if "sslmode=" not in _dsn:
+        _dsn += ("&" if "?" in _dsn else "?") + "sslmode=require"
+
     engine = create_engine(
-        DATABASE_URL,
+        _dsn,
         poolclass=NullPool,
         pool_pre_ping=True,
         connect_args={"sslmode": "require", "connect_timeout": 10},
