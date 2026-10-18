@@ -19,6 +19,7 @@ from __future__ import annotations
 
 import logging
 import time
+from collections import defaultdict
 
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
@@ -36,6 +37,25 @@ router = APIRouter(prefix="/chat", tags=["Chatbot"])
 # Instancias de servicios (singleton por proceso)
 _rag = RAGService()
 _ai = GeminiService()
+
+# ── Rate limit: 50 preguntas por usuario por día ─────────────────
+# En Vercel serverless el memorio se resetea entre arranques, pero
+# evita abuso masivo en una misma sesión de usuario.
+DAILY_LIMIT = 50
+_user_calls: dict[str, list[float]] = defaultdict(list)
+
+def _check_rate_limit(usuario: str) -> None:
+    now = time.time()
+    calls = _user_calls[usuario]
+    # Limpiar llamadas de más de 24 horas
+    calls[:] = [t for t in calls if now - t < 86400]
+    if len(calls) >= DAILY_LIMIT:
+        raise HTTPException(
+            status_code=status.HTTP_429_TOO_MANY_REQUESTS,
+            detail=f"Límite diario alcanzado ({DAILY_LIMIT} preguntas/día). "
+                   f"Contacta al colegio al +57 312 5399542.",
+        )
+    calls.append(now)
 
 # Respuesta de último recurso cuando todo falla
 _FALLBACK_MSG = (
@@ -70,6 +90,9 @@ async def chat(
     usuario = (request.usuario or "anonimo").strip() or "anonimo"
     logger.info("[chatbot] Pregunta de '%s': %s", usuario, pregunta[:120])
 
+    # Rate limit por usuario (protección de cuota Gemini)
+    _check_rate_limit(usuario)
+
     respuesta: str = _FALLBACK_MSG
     fuente: str = "Error"
     start: float = time.perf_counter()
@@ -79,18 +102,25 @@ async def chat(
         context, sources = _rag.build_context(pregunta, db)
         logger.debug("[chatbot] Fuentes RAG: %s", sources or "ninguna")
 
+        # ── Paso 1.5: Memoria conversacional (últimas 6 interacciones) ──
+        try:
+            recent = db.query(crud.ChatHistory).filter(
+                crud.ChatHistory.usuario == usuario
+            ).order_by(crud.ChatHistory.created_at.desc()).limit(6).all()
+            history_lines = []
+            for h in reversed(recent):  # orden cronológico (más antiguo primero)
+                history_lines.append(f"- Usuario: {h.pregunta}")
+                if h.respuesta:
+                    history_lines.append(f"  Exmi: {h.respuesta[:200]}")
+            history_text = "\n".join(history_lines[-10:])  # máx ~10 líneas
+        except Exception as hist_err:
+            logger.warning("[chatbot] No se pudo cargar historial: %s", hist_err)
+            history_text = ""
+
         # ── Paso 2: Generar respuesta ────────────────────────────
-        if context:
-            respuesta, fuente = await _ai.generate_response(pregunta, context)
-            logger.info("[chatbot] Respuesta generada. Fuente: %s", fuente)
-        else:
-            logger.info("[chatbot] Sin contexto relevante para: %s", pregunta[:80])
-            respuesta = (
-                "No encontré información institucional relacionada con tu pregunta. "
-                "Te sugiero contactar al colegio al +57 312 5399542 "
-                "o visitar www.webcolegios.com/coleinstein."
-            )
-            fuente = "Sin información"
+        # SIEMPRE se llama a Gemini (con o sin contexto RAG).
+        respuesta, fuente = await _ai.generate_response(pregunta, context, history_text)
+        logger.info("[chatbot] Respuesta generada. Fuente: %s", fuente)
 
     except Exception as exc:  # noqa: BLE001
         logger.exception("[chatbot] Error inesperado al procesar pregunta: %s", exc)

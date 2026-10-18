@@ -9,6 +9,7 @@ El script es idempotente: no duplica registros si ya existen.
 from __future__ import annotations
 
 import os
+import secrets
 import sys
 
 # Asegura que Python encuentre el paquete 'app'
@@ -30,17 +31,26 @@ def run_seed() -> None:
     try:
         # ── Usuario administrador (docente) ───────────────────────
         # Idempotente por email O username (evita duplicar 'admin')
+        # La contraseña NUNCA se escribe en el repo: se lee de la variable
+        # de entorno ADMIN_INITIAL_PASSWORD (Vercel / .env local).
+        # Si no está definida se genera una aleatoria de un solo uso y se
+        # imprime en los logs del despliegue para recuperarla una vez.
         from sqlalchemy import or_ as _or
         if not db.query(User).filter(_or(User.email == "admin@einstein.edu", User.username == "admin")).first():
+            _initial_pwd = os.getenv("ADMIN_INITIAL_PASSWORD") or secrets.token_urlsafe(12)
+            _pwd_from_env = bool(os.getenv("ADMIN_INITIAL_PASSWORD"))
             db.add(User(
                 email="admin@einstein.edu",
                 username="admin",
-                hashed_password=hash_password("einstein2024"),
+                hashed_password=hash_password(_initial_pwd),
                 role="admin",
             ))
-            print("  Usuario admin creado  ->  admin@einstein.edu / einstein2024")
+            print(f"  ⚠️  Usuario admin creado  →  admin@einstein.edu / {_initial_pwd}")
+            if not _pwd_from_env:
+                print("     ¡GENERADA AL AZAR! Defina ADMIN_INITIAL_PASSWORD para fijar la credencial.")
+            print("     CÁMBIALA en el panel docente (Admin → Cuenta).")
         else:
-            print("  Usuario admin ya existe")
+            print("  ⏭  Usuario admin ya existe")
 
         # ── Base de conocimiento ──────────────────────────────────
         if db.query(KnowledgeBase).count() == 0:
@@ -212,7 +222,7 @@ def run_seed() -> None:
         print("\n" + "═" * 50)
         print("  ✅ Base de datos lista")
         print("  📧 Admin: admin@einstein.edu")
-        print("  🔑 Clave: einstein2024")
+        print("  🔑 Clave: la definida en ADMIN_INITIAL_PASSWORD (ver logs arriba)")
         print("  ⚠️  Cambia la contraseña en el panel docente.")
         print("═" * 50)
 

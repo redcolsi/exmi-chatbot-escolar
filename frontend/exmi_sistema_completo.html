@@ -644,12 +644,46 @@ mark{background:#f5a62330;color:var(--gold);border-radius:2px;}
 
 /* Responsive */
 @media(max-width:768px){
-  .sidebar,.admin-sidebar{display:none;}
+  .sidebar,.admin-sidebar{
+    display:none;
+    position:fixed;
+    top:0;
+    left:0;
+    height:100%;
+    z-index:9999;
+    width:280px;
+    box-shadow:4px 0 24px rgba(0,0,0,.5);
+  }
+  .sidebar.open,.admin-sidebar.open{display:flex;}
   .msg-wrap{max-width:88%;}
+  #sidebarToggle{display:flex !important;}
 }
+#sidebarToggle{
+  display:none;
+  align-items:center;
+  justify-content:center;
+  width:36px;height:36px;
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:8px;
+  color:var(--text);
+  font-size:18px;
+  cursor:pointer;
+  margin-right:8px;
+}
+#sidebarToggle:hover{border-color:var(--gold);color:var(--gold);}
+.sidebar-backdrop{
+  display:none;
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.5);
+  z-index:9998;
+}
+.sidebar-backdrop.open{display:block;}
 </style>
 </head>
 <body>
+<div class="sidebar-backdrop" id="sidebarBackdrop" onclick="closeSidebar()"></div>
 
 <!-- ══════════════════════════════════════════════════════════════
      PANTALLA 1: LOGIN ADMINISTRATIVO
@@ -722,6 +756,7 @@ mark{background:#f5a62330;color:var(--gold);border-radius:2px;}
   <!-- MAIN -->
   <div class="main-content">
     <div class="topbar">
+      <button id="sidebarToggle" onclick="toggleSidebar()" aria-label="Abrir menú">☰</button>
       <span class="topbar-title" id="topbarTitle">Chat con Exmi</span>
       <button class="tab-pill active" onclick="switchTab('chat',this)">💬 Chat</button>
       <button class="tab-pill" onclick="switchTab('horarios',this)">📅 Horarios</button>
@@ -1122,7 +1157,21 @@ let modalContext = {};
    UTILIDADES
 ═══════════════════════════════════════════════════════════════ */
 function esc(v){
-  return String(v ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  return String(v ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+
+/* Sidebar móvil: abrir/cerrar */
+function toggleSidebar(){
+  const sb = document.querySelector('.sidebar');
+  const bd = document.getElementById('sidebarBackdrop');
+  if(sb) sb.classList.toggle('open');
+  if(bd) bd.classList.toggle('open');
+}
+function closeSidebar(){
+  const sb = document.querySelector('.sidebar');
+  const bd = document.getElementById('sidebarBackdrop');
+  if(sb) sb.classList.remove('open');
+  if(bd) bd.classList.remove('open');
 }
 function assetUrl(p){ return !p ? null : (/^https?:/.test(p) ? p : API_BASE + p); }
 function formatSize(bytes){
@@ -1216,25 +1265,28 @@ async function loadUIConfig(){
   catch(e){ console.warn('[Exmi] Sin conexión con /public/config; se usa la apariencia por defecto.', e); }
 }
 
-/* Datos completos del panel admin */
+/* Datos institucionales: usa endpoints públicos (sin login) */
 async function syncInstitutionalData(showToast = false){
-  if(!ACCESS_TOKEN) return false;
   try{
-    const data = await apiFetch('/admin/data');
-    KB = (data.kb || []).map(x => ({ id:x.id, cat:x.categoria, pregunta:x.pregunta, respuesta:x.respuesta }));
-    DOCENTES  = data.docentes  || [];
-    HORARIOS  = data.horarios  || [];
-    CONTACTOS = data.contactos || [];
-    DOCS      = data.documents || [];
-    IMAGES    = data.imagenes  || [];
-    CONFIG    = data.config    || {};
+    const [kb, docentes, horarios, contactos, config] = await Promise.all([
+      publicGet('/public/kb'),
+      publicGet('/public/docentes'),
+      publicGet('/public/horarios'),
+      publicGet('/public/contactos'),
+      publicGet('/public/config'),
+    ]);
+    KB = (kb || []).map(x => ({ id:x.id, cat:x.categoria, pregunta:x.pregunta, respuesta:x.respuesta }));
+    DOCENTES  = docentes || [];
+    HORARIOS  = horarios || [];
+    CONTACTOS = contactos || [];
+    CONFIG    = config || {};
     applyConfigDict({ ...CONFIG, sections: parseJSONSafe(CONFIG.sections, {}) });
     UI_CONFIG.aiMode = CONFIG.ai_mode || 'ia';
-    if(showToast) toast('Datos sincronizados con el backend', 'success');
+    if(showToast) toast('Datos cargados', 'success');
     return true;
   }catch(e){
-    console.error('[Exmi] No se pudo sincronizar con backend:', e);
-    if(showToast) toast('No se pudo conectar con la BD del backend', 'error');
+    console.error('[Exmi] No se pudo cargar datos públicos:', e);
+    if(showToast) toast('No se pudo conectar con el backend', 'error');
     return false;
   }
 }
@@ -1602,7 +1654,27 @@ function removeTyping(){ const el = document.getElementById('typing'); if(el) el
 
 /* Texto del modelo → HTML seguro (escapa todo; admite **negrita** y saltos de línea) */
 function renderBotText(text){
-  return esc(text).replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>').replace(/\n/g, '<br>');
+  let s = esc(text);
+  // Encabezados
+  s = s.replace(/^### (.+)$/gm, '<strong>$1</strong>');
+  s = s.replace(/^## (.+)$/gm, '<strong>$1</strong>');
+  s = s.replace(/^# (.+)$/gm, '<strong>$1</strong>');
+  // Negrita, cursiva, código inline
+  s = s.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+  s = s.replace(/\*(.+?)\*/g, '<em>$1</em>');
+  s = s.replace(/`(.+?)`/g, '<code>$1</code>');
+  // Listas con guiones o números
+  s = s.replace(/^\s*[-•]\s+(.*)$/gm, '<li>$1</li>');
+  s = s.replace(/^\s*\d+[.)]\s+(.*)$/gm, '<li>$1</li>');
+  s = s.replace(/(<li>.*<\/li>\n?)+/g, m => '<ul>' + m.replace(/\n/g, '') + '</ul>');
+  // Líneas en blanco como separador de párrafo
+  s = s.replace(/\n{2,}/g, '</p><p>');
+  s = '<p>' + s + '</p>';
+  // Saltos de línea simples
+  s = s.replace(/\n/g, '<br>');
+  // Limpiar párrafos vacíos
+  s = s.replace(/<p>\s*<\/p>/g, '');
+  return s;
 }
 
 async function sendMsg(){
