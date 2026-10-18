@@ -246,11 +246,22 @@ def health():
     if DB_ERROR:
         db_info["error_postgres"] = DB_ERROR
     try:
-        from sqlalchemy import text
+        from sqlalchemy import inspect, text
 
         db = SessionLocal()
         try:
             db.execute(text("SELECT 1"))
+            if IS_POSTGRES:
+                ident = db.execute(text(
+                    "SELECT current_database(), inet_server_addr()::text, current_user"
+                )).first()
+                db_info["servidor"] = {"bd": ident[0], "ip": ident[1], "usuario": ident[2]}
+            tablas = set(inspect(engine).get_table_names())
+            db_info["conteo"] = {
+                t: db.execute(text(f"SELECT COUNT(*) FROM {t}")).scalar()
+                for t in ("knowledge_base", "docentes", "users")
+                if t in tablas
+            }
         finally:
             db.close()
         db_info["conectada"] = True
