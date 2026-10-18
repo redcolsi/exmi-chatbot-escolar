@@ -17,6 +17,7 @@ import logging
 import os
 from contextlib import asynccontextmanager
 from pathlib import Path
+from typing import Any, Dict
 
 from fastapi.responses import FileResponse
 
@@ -24,7 +25,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 
-from app.database.database import engine, SessionLocal, DATABASE_URL
+from app.database.database import engine, SessionLocal, DATABASE_URL, IS_POSTGRES
 from app.models.models import Base
 from app.models.document import Document, DocumentChunk  # noqa: F401 — registra tablas del RAG documental
 
@@ -48,34 +49,45 @@ IS_VERCEL: bool = os.getenv("VERCEL") == "1" or bool(os.getenv("VERCEL_ENV"))
 # `create_all` solo crea tablas ausentes: no añade columnas nuevas a tablas que ya
 # existen. Por eso, tras crearlas, se aplica una migración ligera para que una BD
 # previa siga funcionando al añadir campos nuevos (p. ej. imagenes.pregunta_disparadora).
-Base.metadata.create_all(bind=engine)
+#
+# Todo esto se ejecuta al importar el módulo, así que debe tolerar fallos: si la BD
+# no responde (credenciales, red, allow-list), la aplicación debe igualLevantar para
+# que /health informe del problema en vez de devolver 500 en todas partes.
 
 
-def _apply_light_migrations() -> None:
-    """Añade columnas faltantes sin perder datos (idempotente y tolerable a fallos)."""
+def _init_database() -> None:
+    try:
+        Base.metadata.create_all(bind=engine)
+    except Exception as exc:
+        logger.error("No se pudieron crear las tablas: %s: %s", type(exc).__name__, exc)
+        return
+
     additions = [
         ("imagenes", "pregunta_disparadora", "VARCHAR(500)"),
     ]
-    from sqlalchemy import inspect, text
+    try:
+        from sqlalchemy import inspect, text
 
-    inspector = inspect(engine)
-    existing_tables = set(inspector.get_table_names())
-    for table, column, coltype in additions:
-        if table not in existing_tables:
-            continue
-        cols = {c["name"] for c in inspector.get_columns(table)}
-        if column in cols:
-            continue
-        try:
-            with engine.begin() as conn:
-                conn.execute(text(f"ALTER TABLE {table} ADD COLUMN {column} {coltype}"))
-            logger.info("Migración aplicada: %s.%s", table, column)
-        except Exception as exc:
-            logger.warning("No se pudo añadir %s.%s: %s", table, column, exc)
+        inspector = inspect(engine)
+        existing_tables = set(inspector.get_table_names())
+        for table, column, coltype in additions:
+            if table not in existing_tables:
+                continue
+            cols = {c["name"] for c in inspector.get_columns(table)}
+            if column in cols:
+                continue
+            try:
+                with engine.begin() as conn:
+                    conn.execute(text(f"ALTER TABLE {table} ADD COLUMN {column} {coltype}"))
+                logger.info("Migración aplicada: %s.%s", table, column)
+            except Exception as exc:
+                logger.warning("No se pudo añadir %s.%s: %s", table, column, exc)
+    except Exception as exc:
+        logger.warning("No se pudo inspeccionar el esquema: %s: %s", type(exc).__name__, exc)
 
 
-_apply_light_migrations()
-logger.info("Tablas de BD verificadas/creadas. DATABASE_URL=%s", DATABASE_URL)
+_init_database()
+logger.info("BD inicializada. DATABASE_URL=%s", DATABASE_URL)
 
 # ── Crear directorios de uploads ──────────────────────────────
 # En Vercel solo /tmp es escribible.
@@ -221,8 +233,21 @@ def root():
 
 @app.get("/health", tags=["Info"])
 def health():
-    """Verificación rápida de que el servidor está activo."""
-    return {"status": "ok"}
+    """Verificación rápida del servidor, incluida la conexión a la base de datos."""
+    db_info: Dict[str, Any] = {}
+    try:
+        from sqlalchemy import text
+
+        db = SessionLocal()
+        try:
+            db.execute(text("SELECT 1"))
+        finally:
+            db.close()
+        db_info = {"conectada": True, "tipo": "postgres" if IS_POSTGRES else "sqlite"}
+    except Exception as exc:
+        db_info = {"conectada": False, "error": f"{type(exc).__name__}: {exc}"[:300]}
+
+    return {"status": "ok", "bd": db_info}
 
 
 @app.get("/health/ai", tags=["Info"])
