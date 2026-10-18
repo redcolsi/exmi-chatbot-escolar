@@ -34,12 +34,31 @@ load_dotenv()
 
 
 def _resolve_database_url() -> str:
-    url = os.getenv("DATABASE_URL", "").strip()
-    if url:
-        # Supabase publica a veces postgres:// — SQLAlchemy prefiere postgresql://
-        if url.startswith("postgres://"):
-            url = "postgresql://" + url[len("postgres://"):]
-        return url
+    """
+    Obtiene la URL de la base de datos.
+
+    En Vercel se prueba primero `DATABASE_URL_POSTGRES` (Session pooler), porque
+    el host directo `db.*` a veces no resuelve por DNS (solo devuelve AAAA).
+
+    Orden:
+      - Vercel   → `DATABASE_URL_POSTGRES`, luego `DATABASE_URL`, luego SQLite en /tmp
+      - Local    → `DATABASE_URL` (tu .env), luego `DATABASE_URL_POSTGRES`, luego SQLite
+
+    Así el .env de desarrollo sigue mandando, y en producción se prefiera el pooler.
+    """
+    if os.getenv("VERCEL") == "1" or os.getenv("VERCEL_ENV"):
+        nombres = ("DATABASE_URL_POSTGRES", "DATABASE_URL")
+    else:
+        nombres = ("DATABASE_URL", "DATABASE_URL_POSTGRES")
+
+    for nombre in nombres:
+        url = os.getenv(nombre, "").strip()
+        if url:
+            # Supabase publica a veces postgres:// — SQLAlchemy prefiere postgresql://
+            if url.startswith("postgres://"):
+                url = "postgresql://" + url[len("postgres://"):]
+            return url
+
     # Vercel: solo /tmp es escribible
     if os.getenv("VERCEL") == "1" or os.getenv("VERCEL_ENV"):
         return "sqlite:////tmp/exmi.db"
