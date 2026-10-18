@@ -49,16 +49,51 @@ def _resolve_database_url() -> str:
 DATABASE_URL: str = _resolve_database_url()
 IS_POSTGRES: bool = DATABASE_URL.startswith("postgresql")
 
+
+def _sanitize_dsn(url: str) -> str:
+    """
+    Limpia el DSN de Postgres y devuelve los errores de formato como texto.
+
+    Casos que corrige:
+      - `?pgbouncer=true` / `pgmode=...`: no son opciones válidas de psycopg2.
+      - Credenciales sin codificar: una contraseña con `#`, `@`, `:` o `/` rompe
+        el parseo del DSN. Se percent-encodifican los componentes de user y pass.
+      - Falta `sslmode`, que Supabase exige.
+
+    Limitación conocida: una contraseña que contenga `@` es ambigua, porque `@`
+    es también el separador entre credenciales y host. Ejemplo:
+        ...:a@b@aws-0-...pooler.supabase.com:6543/...
+    se interpreta como contraseña "a" y host "b@aws-0-...". Si tu contraseña
+    lleva `@`, codifícala como %40 al definir DATABASE_URL.
+    """
+    try:
+        from urllib.parse import quote, unquote
+
+        # `urlsplit` parte el netloc en el ÚLTIMO "@", pero en un connection
+        # string la contraseña puede contener "@" (p. ej. "Cla@ve"). Por eso se
+        # separa a mano en el PRIMER "@": todo lo anterior son credenciales.
+        esquema, resto = url.split("://", 1)
+        credenciales_crudas, _, destino = resto.partition("@")
+
+        usuario, _, clave = credenciales_crudas.partition(":")
+        # Se decodifica primero: si ya viene codificada, no hay que doble-codificar.
+        usuario = quote(unquote(usuario), safe="")
+        clave = quote(unquote(clave), safe="")
+
+        credenciales = f"{usuario}:{clave}" if credenciales_crudas.count(":") else usuario
+        limpio = f"{esquema}://{credenciales}@{destino}"
+        limpio = re.sub(r"[?&]pgbouncer=true", "", limpio)
+        limpio = re.sub(r"[?&]pgmode=\w+", "", limpio)
+        if "sslmode=" not in limpio:
+            limpio += ("&" if "?" in limpio else "?") + "sslmode=require"
+        return limpio
+    except Exception as exc:  # noqa: BLE001
+        return f"postgresql://ERROR_DSN:{type(exc).__name__}@localhost/dummy"
+
+
 if IS_POSTGRES:
     # Serverless (Vercel): NullPool evita conexiones colgadas entre invocaciones.
-    # Supabase exige SSL. Se normaliza el DSN por si viene con `pgbouncer=true`
-    # (no es una opción válida de psycopg2 y rompe la importación del módulo).
-    _dsn = DATABASE_URL
-    _dsn = re.sub(r"[?&]pgbouncer=true", "", _dsn)
-    _dsn = re.sub(r"[?&]pgmode=\w+", "", _dsn)
-    if "sslmode=" not in _dsn:
-        _dsn += ("&" if "?" in _dsn else "?") + "sslmode=require"
-
+    _dsn = _sanitize_dsn(DATABASE_URL)
     engine = create_engine(
         _dsn,
         poolclass=NullPool,
