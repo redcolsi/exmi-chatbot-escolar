@@ -66,7 +66,8 @@ class Document(Base):
     name:        Mapped[str]           = mapped_column(String(255), nullable=False, index=True)
     description: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
     category:    Mapped[DocumentCategory] = mapped_column(
-        Enum(DocumentCategory), nullable=False, default=DocumentCategory.GENERAL, index=True
+        Enum(DocumentCategory, values_callable=lambda e: [m.value for m in e]),
+        nullable=False, default=DocumentCategory.GENERAL, index=True
     )
 
     # Archivo de origen
@@ -76,7 +77,8 @@ class Document(Base):
 
     # Pipeline
     status:        Mapped[DocumentStatus] = mapped_column(
-        Enum(DocumentStatus), nullable=False, default=DocumentStatus.PENDING, index=True
+        Enum(DocumentStatus, values_callable=lambda e: [m.value for m in e]),
+        nullable=False, default=DocumentStatus.PENDING, index=True
     )
     chunk_count:   Mapped[int]           = mapped_column(Integer, nullable=False, default=0)
     error_message: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
