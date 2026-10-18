@@ -7,17 +7,17 @@
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet"/>
 <style>
 :root {
-  /* Colores base */
-  --bg:        #0a0e17;
-  --surface:   #111827;
-  --card:      #1a2236;
-  --card2:     #1e2840;
-  --border:    #2a3650;
-  --border2:   #374560;
-  /* Acento institucional */
-  --gold:      #f5a623;
-  --gold2:     #e07b00;
-  --gold-glow: #f5a62330;
+  /* Colores base — azul marino (institucional) */
+  --bg:        #0d1420;
+  --surface:   #131d2e;
+  --card:      #1a2740;
+  --card2:     #1f2e4a;
+  --border:    #27364f;
+  --border2:   #33455f;
+  /* Acento institucional — granate */
+  --gold:      #c8102e;
+  --gold2:     #a00d25;
+  --gold-glow: #c8102e30;
   /* Estados */
   --green:     #22c55e;
   --blue:      #3b82f6;
@@ -30,8 +30,8 @@
   --text2:     #94a3b8;
   --text3:     #64748b;
   /* Bubbles */
-  --user-bg:   #1e3a5f;
-  --bot-bg:    #1a2236;
+  --user-bg:   #2a3f66;
+  --bot-bg:    #1a2740;
   /* Misc */
   --r:         12px;
   --r2:        8px;
@@ -40,12 +40,25 @@
   --shadow:    0 4px 24px #00000060;
   --shadow2:   0 2px 8px #00000040;
   /* Variables de interfaz (administrables desde panel) */
-  --chat-accent: #f5a623;
-  --chat-bg:     #0a0e17;
-  --chat-surface: #111827;
+  --chat-accent: #c8102e;
+  --chat-bg:     #0d1420;
+  --chat-surface: #131d2e;
   --bot-name:    "Exmi";
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+
+/* Iconos SVG: heredan currentColor y se alinean con el texto */
+.ico,.ic{
+  display:inline-flex;align-items:center;justify-content:center;
+  width:20px;height:20px;flex-shrink:0;vertical-align:middle;
+}
+.ico svg,.ic svg{
+  width:100%;height:100%;fill:none;
+  stroke:currentColor;stroke-width:1.9;
+  stroke-linecap:round;stroke-linejoin:round;
+}
+.ic-lg svg{width:26px;height:26px;}
+.avatar-ring svg,.bot-avatar svg,.avatar-preview svg{width:42px;height:42px;stroke-width:1.7;}
 html,body{height:100%;font-family:var(--font);background:var(--chat-bg);color:var(--text);overflow:hidden;}
 
 /* ═══════════════════════════════════════════════════
@@ -64,7 +77,7 @@ html,body{height:100%;font-family:var(--font);background:var(--chat-bg);color:va
 }
 #screen-login::before{
   content:'';position:absolute;inset:0;
-  background:radial-gradient(ellipse 60% 50% at 50% 50%,#f5a62310 0%,transparent 70%);
+  background:radial-gradient(ellipse 60% 50% at 50% 50%,#c8102e10 0%,transparent 70%);
   pointer-events:none;
 }
 .login-box{
@@ -82,7 +95,7 @@ html,body{height:100%;font-family:var(--font);background:var(--chat-bg);color:va
 }
 .login-logo .avatar-ring{
   width:80px;height:80px;border-radius:50%;
-  background:linear-gradient(135deg,var(--gold),var(--gold2));
+  background:var(--gold);
   display:flex;align-items:center;justify-content:center;
   font-size:36px;margin:0 auto 12px;
   box-shadow:0 0 24px var(--gold-glow);
@@ -99,7 +112,7 @@ html,body{height:100%;font-family:var(--font);background:var(--chat-bg);color:va
 }
 .form-group input:focus{border-color:var(--gold);}
 .btn-primary{
-  width:100%;background:linear-gradient(135deg,var(--gold),var(--gold2));
+  width:100%;background:var(--gold);
   border:none;border-radius:var(--r2);color:#000;
   font-family:var(--font);font-size:15px;font-weight:700;
   padding:13px;cursor:pointer;transition:opacity .2s,transform .1s;
@@ -134,7 +147,7 @@ html,body{height:100%;font-family:var(--font);background:var(--chat-bg);color:va
 }
 .bot-avatar{
   width:44px;height:44px;border-radius:50%;
-  background:linear-gradient(135deg,var(--chat-accent),var(--gold2));
+  background:var(--chat-accent);
   display:flex;align-items:center;justify-content:center;
   font-size:22px;flex-shrink:0;
   box-shadow:0 0 12px var(--gold-glow);
@@ -160,7 +173,7 @@ html,body{height:100%;font-family:var(--font);background:var(--chat-bg);color:va
   transition:all .2s;
 }
 .nav-btn:hover{background:var(--card);color:var(--text);}
-.nav-btn.active{background:var(--gold-glow);color:var(--gold);border:1px solid #f5a62330;}
+.nav-btn.active{background:var(--gold-glow);color:var(--gold);border:1px solid #c8102e30;}
 .nav-btn .ico{font-size:15px;width:20px;text-align:center;flex-shrink:0;}
 
 .nav-divider{height:1px;background:var(--border);margin:8px 4px;}
@@ -187,7 +200,7 @@ html,body{height:100%;font-family:var(--font);background:var(--chat-bg);color:va
   font-size:12px;padding:6px 8px;margin:6px 0;outline:none;
 }
 .btn-broadcast{
-  width:100%;background:linear-gradient(135deg,var(--gold),var(--gold2));
+  width:100%;background:var(--gold);
   border:none;border-radius:var(--r2);color:#000;
   font-family:var(--font);font-size:12px;font-weight:700;
   padding:8px;cursor:pointer;transition:opacity .2s;
@@ -212,7 +225,7 @@ html,body{height:100%;font-family:var(--font);background:var(--chat-bg);color:va
 .tab-pill:hover{border-color:var(--gold);color:var(--gold);}
 .tab-pill.active{background:var(--gold-glow);border-color:var(--gold);color:var(--gold);font-weight:600;}
 .btn-admin{
-  background:linear-gradient(135deg,var(--gold),var(--gold2));
+  background:var(--gold);
   border:none;border-radius:var(--r2);color:#000;
   font-family:var(--font);font-size:12px;font-weight:700;
   padding:7px 14px;cursor:pointer;transition:opacity .2s;
@@ -244,7 +257,7 @@ html,body{height:100%;font-family:var(--font);background:var(--chat-bg);color:va
   font-size:14px;flex-shrink:0;
 }
 .msg-avatar.bot-av{
-  background:linear-gradient(135deg,var(--chat-accent),var(--gold2));
+  background:var(--chat-accent);
   overflow:hidden;
 }
 .msg-avatar.bot-av img{width:100%;height:100%;object-fit:cover;border-radius:50%;}
@@ -270,7 +283,7 @@ html,body{height:100%;font-family:var(--font);background:var(--chat-bg);color:va
 /* TABLA EN BUBBLE */
 .bubble table{width:100%;border-collapse:collapse;font-size:12.5px;margin-top:8px;}
 .bubble th{
-  background:#f5a62318;color:var(--gold);font-weight:600;
+  background:#c8102e18;color:var(--gold);font-weight:600;
   padding:7px 10px;text-align:left;border-bottom:1px solid var(--border);
   font-size:11px;text-transform:uppercase;letter-spacing:.04em;
 }
@@ -283,7 +296,7 @@ html,body{height:100%;font-family:var(--font);background:var(--chat-bg);color:va
   display:inline-block;padding:2px 9px;border-radius:20px;
   font-size:11px;font-weight:600;
   background:var(--gold-glow);color:var(--gold);
-  border:1px solid #f5a62340;
+  border:1px solid #c8102e40;
 }
 .badge.g{background:#22c55e18;color:var(--green);border-color:#22c55e30;}
 .badge.b{background:#3b82f618;color:var(--blue);border-color:#3b82f630;}
@@ -314,7 +327,7 @@ html,body{height:100%;font-family:var(--font);background:var(--chat-bg);color:va
 .input-bar input::placeholder{color:var(--text3);}
 .send-btn{
   width:44px;height:44px;border-radius:50%;flex-shrink:0;
-  background:linear-gradient(135deg,var(--chat-accent),var(--gold2));
+  background:var(--chat-accent);
   border:none;cursor:pointer;font-size:18px;
   display:flex;align-items:center;justify-content:center;
   transition:transform .15s;box-shadow:0 0 12px var(--gold-glow);
@@ -331,7 +344,7 @@ html,body{height:100%;font-family:var(--font);background:var(--chat-bg);color:va
 }
 .data-table{width:100%;border-collapse:collapse;font-size:13px;}
 .data-table th{
-  background:#f5a62312;color:var(--gold);
+  background:#c8102e12;color:var(--gold);
   padding:10px 14px;text-align:left;
   border-bottom:2px solid var(--gold);
   font-size:11px;text-transform:uppercase;letter-spacing:.06em;
@@ -345,7 +358,7 @@ html,body{height:100%;font-family:var(--font);background:var(--chat-bg);color:va
 .sched-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px;}
 .sched-card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;}
 .sched-card .sh{
-  background:linear-gradient(135deg,var(--gold),var(--gold2));
+  background:var(--gold);
   color:#000;font-size:14px;font-weight:800;padding:10px 14px;
 }
 .sched-row{display:flex;justify-content:space-between;padding:8px 14px;border-bottom:1px solid #ffffff08;font-size:12.5px;}
@@ -378,7 +391,7 @@ html,body{height:100%;font-family:var(--font);background:var(--chat-bg);color:va
 }
 .admin-sidebar-head .logo .ic{
   width:36px;height:36px;border-radius:var(--r2);
-  background:linear-gradient(135deg,var(--gold),var(--gold2));
+  background:var(--gold);
   display:flex;align-items:center;justify-content:center;
   font-size:18px;
 }
@@ -437,7 +450,7 @@ html,body{height:100%;font-family:var(--font);background:var(--chat-bg);color:va
 }
 .panel-header h3{font-size:18px;font-weight:800;color:var(--text);}
 .btn-add{
-  background:linear-gradient(135deg,var(--green),#16a34a);
+  background:var(--green);
   border:none;border-radius:var(--r2);color:#fff;
   font-family:var(--font);font-size:13px;font-weight:700;
   padding:9px 16px;cursor:pointer;transition:opacity .2s;
@@ -533,7 +546,7 @@ html,body{height:100%;font-family:var(--font);background:var(--chat-bg);color:va
 }
 .btn-cancel:hover{border-color:var(--border2);color:var(--text);}
 .btn-save{
-  background:linear-gradient(135deg,var(--gold),var(--gold2));
+  background:var(--gold);
   border:none;border-radius:var(--r2);color:#000;
   font-family:var(--font);font-size:13px;font-weight:700;
   padding:9px 20px;cursor:pointer;transition:opacity .2s;
@@ -609,7 +622,7 @@ html,body{height:100%;font-family:var(--font);background:var(--chat-bg);color:va
 }
 .avatar-preview{
   width:80px;height:80px;border-radius:50%;
-  background:linear-gradient(135deg,var(--gold),var(--gold2));
+  background:var(--gold);
   display:flex;align-items:center;justify-content:center;
   font-size:36px;overflow:hidden;flex-shrink:0;
   border:3px solid var(--border);
@@ -626,7 +639,7 @@ html,body{height:100%;font-family:var(--font);background:var(--chat-bg);color:va
 
 /* Broadcast history */
 .bc-bubble{
-  background:linear-gradient(135deg,#1a120080,#2a1a0080);
+  background:#c8102e14;
   border:1px solid var(--gold);border-radius:var(--r);
   padding:14px 16px;font-size:13px;line-height:1.6;color:#ffe8a0;
   display:flex;gap:10px;align-items:flex-start;
@@ -635,7 +648,34 @@ html,body{height:100%;font-family:var(--font);background:var(--chat-bg);color:va
 .bc-bubble strong{color:var(--gold);font-weight:700;}
 
 /* Search highlight */
-mark{background:#f5a62330;color:var(--gold);border-radius:2px;}
+mark{background:#c8102e30;color:var(--gold);border-radius:2px;}
+
+/* Galería de promociones */
+.promo-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:16px;margin-top:18px;}
+.promo-card{
+  margin:0;background:var(--card);border:1px solid var(--border);
+  border-radius:var(--r);overflow:hidden;transition:border-color .2s,transform .2s;
+}
+.promo-card:hover{border-color:var(--gold);transform:translateY(-2px);}
+.promo-card img{width:100%;height:230px;object-fit:cover;display:block;}
+.promo-card figcaption{padding:11px 13px;font-size:13px;color:var(--text2);line-height:1.45;}
+.mc-trigger{display:block;color:var(--gold);font-size:11px;margin-top:3px;}
+
+/* Imágenes adjuntas a la respuesta del bot */
+.msg-imgs{display:flex;flex-wrap:wrap;gap:10px;margin-top:12px;}
+.msg-img{
+  margin:0;max-width:min(100%,280px);background:var(--card);
+  border:1px solid var(--border);border-radius:var(--r);overflow:hidden;
+}
+.msg-img img{width:100%;height:auto;display:block;max-height:340px;object-fit:cover;}
+.msg-img figcaption{
+  font-size:12px;color:var(--text2);padding:8px 10px;
+  border-top:1px solid var(--border);line-height:1.4;
+}
+
+/* Iconos insertados dentro de etiquetas */
+.ico-inline{width:1em;height:1em;display:inline-block;vertical-align:-.12em;}
+.ico-inline svg{width:100%;height:100%;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round;}
 
 /* Scrollbar global */
 ::-webkit-scrollbar{width:5px;height:5px;}
@@ -685,13 +725,51 @@ mark{background:#f5a62330;color:var(--gold);border-radius:2px;}
 <body>
 <div class="sidebar-backdrop" id="sidebarBackdrop" onclick="closeSidebar()"></div>
 
+<!-- Sprite de iconos: evita emojis y hereda el color del texto -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-school" viewBox="0 0 24 24"><path d="M3 21h18M5 21V10l7-5 7 5v11M9 21v-6h6v6"/></symbol>
+  <symbol id="i-chat" viewBox="0 0 24 24"><path d="M21 12a8 8 0 0 1-8 8H7l-4 3v-5.5A8 8 0 0 1 11 4h2a8 8 0 0 1 8 8Z"/></symbol>
+  <symbol id="i-calendar" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M16 3v4M8 3v4M3 11h18"/></symbol>
+  <symbol id="i-users" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3"/><path d="M3 20a6 6 0 0 1 12 0M16 5a3 3 0 0 1 0 6M18 20a5 5 0 0 0-3-4"/></symbol>
+  <symbol id="i-phone" viewBox="0 0 24 24"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2 4.2 2 2 0 0 1 4 2h3a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.5 2.1L8.1 9.9a16 16 0 0 0 6 6l1.3-1.1a2 2 0 0 1 2.1-.5c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.7 2Z"/></symbol>
+  <symbol id="i-book" viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20V3H6.5A2.5 2.5 0 0 0 4 5.5v14Z"/><path d="M4 19.5A2.5 2.5 0 0 0 6.5 22H20v-5"/></symbol>
+  <symbol id="i-clipboard" viewBox="0 0 24 24"><rect x="8" y="2" width="8" height="4" rx="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/></symbol>
+  <symbol id="i-lock" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></symbol>
+  <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></symbol>
+  <symbol id="i-pin" viewBox="0 0 24 24"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></symbol>
+  <symbol id="i-megaphone" viewBox="0 0 24 24"><path d="m3 11 15-6v14L3 13v-2Z"/><path d="M7 12v5a2 2 0 0 0 4 0v-3.5"/></symbol>
+  <symbol id="i-send" viewBox="0 0 24 24"><path d="M22 2 11 13M22 2l-7 20-4-9-9-4 20-7Z"/></symbol>
+  <symbol id="i-image" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-5-5L5 21"/></symbol>
+  <symbol id="i-chart" viewBox="0 0 24 24"><path d="M3 3v18h18"/><path d="M7 15v3M12 9v9M17 5v13"/></symbol>
+  <symbol id="i-files" viewBox="0 0 24 24"><path d="M15 2H7a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V6l-4-4Z"/><path d="M14 2v5h5"/></symbol>
+  <symbol id="i-history" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5M12 7v5l4 2"/></symbol>
+  <symbol id="i-brain" viewBox="0 0 24 24"><path d="M12 5a3 3 0 0 0-6 0 3 3 0 0 0-2 5 3 3 0 0 0 1 5 3 3 0 0 0 4 4 3 3 0 0 0 3-2V5Z"/><path d="M12 5a3 3 0 0 1 6 0 3 3 0 0 1 2 5 3 3 0 0 1-1 5 3 3 0 0 1-4 4 3 3 0 0 1-3-2"/></symbol>
+  <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></symbol>
+  <symbol id="i-trash" viewBox="0 0 24 24"><path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6M10 11v6M14 11v6"/></symbol>
+  <symbol id="i-palette" viewBox="0 0 24 24"><path d="M12 3a9 9 0 1 0 0 18 2 2 0 0 0 1.6-3.2 2 2 0 0 1 1.6-3.2H18a3 3 0 0 0 3-3A9 9 0 0 0 12 3Z"/><circle cx="7.5" cy="11" r="1"/><circle cx="10" cy="7" r="1"/><circle cx="15" cy="8" r="1"/></symbol>
+  <symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 2 4 5v6c0 5 3.4 9.4 8 11 4.6-1.6 8-6 8-11V5l-8-3Z"/></symbol>
+  <symbol id="i-key" viewBox="0 0 24 24"><circle cx="8" cy="15" r="4"/><path d="m10.8 12.2 8.2-8.2M17 6l2 2M14 9l2 2"/></symbol>
+  <symbol id="i-user" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></symbol>
+  <symbol id="i-eye" viewBox="0 0 24 24"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></symbol>
+  <symbol id="i-upload" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M12 3v13M7 8l5-5 5 5"/></symbol>
+  <symbol id="i-refresh" viewBox="0 0 24 24"><path d="M3 12a9 9 0 0 1 15-6.7L21 8M21 3v5h-5M21 12a9 9 0 0 1-15 6.7L3 16M3 21v-5h5"/></symbol>
+  <symbol id="i-folder" viewBox="0 0 24 24"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7Z"/></symbol>
+  <symbol id="i-paw" viewBox="0 0 24 24"><circle cx="8" cy="8" r="2"/><circle cx="16" cy="8" r="2"/><circle cx="5" cy="14" r="2"/><circle cx="19" cy="14" r="2"/><path d="M12 12c3 0 5 2.5 5 5a3 3 0 0 1-3 3h-4a3 3 0 0 1-3-3c0-2.5 2-5 5-5Z"/></symbol>
+  <symbol id="i-target" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.5"/></symbol>
+  <symbol id="i-telescope" viewBox="0 0 24 24"><path d="m3 15 6-9 9 6-6 9-9-6Z"/><path d="M9 18v3M9 21h5"/></symbol>
+  <symbol id="i-gem" viewBox="0 0 24 24"><path d="M6 3h12l4 6-10 12L2 9l4-6Z"/><path d="M2 9h20M12 21 8 9l4-6 4 6-4 12"/></symbol>
+  <symbol id="i-menu" viewBox="0 0 24 24"><path d="M3 6h18M3 12h18M3 18h18"/></symbol>
+  <symbol id="i-robot" viewBox="0 0 24 24"><rect x="3" y="8" width="18" height="12" rx="3"/><path d="M12 8V4M9 14h.01M15 14h.01M9 17h6M1.5 12v4M22.5 12v4"/></symbol>
+  <symbol id="i-graduation" viewBox="0 0 24 24"><path d="m2 9 10-5 10 5-10 5-10-5Z"/><path d="M6 11.5V17c0 1.5 3 3 6 3s6-1.5 6-3v-5.5"/></symbol>
+</svg>
+
 <!-- ══════════════════════════════════════════════════════════════
      PANTALLA 1: LOGIN ADMINISTRATIVO
 ══════════════════════════════════════════════════════════════ -->
 <div id="screen-login" class="screen">
   <div class="login-box">
     <div class="login-logo">
-      <div class="avatar-ring" id="loginAvatar">🤖</div>
+      <div class="avatar-ring" id="loginAvatar"><svg viewBox="0 0 24 24" aria-hidden="true" class="ico-inline"><use href="#i-robot"/></svg></div>
       <h2>Colegio Albert Einstein</h2>
       <p>Panel Administrativo Docente</p>
     </div>
@@ -716,7 +794,7 @@ mark{background:#f5a62330;color:var(--gold);border-radius:2px;}
   <!-- SIDEBAR -->
   <aside class="sidebar">
     <div class="sidebar-header">
-      <div class="bot-avatar" id="chatBotAvatar">🤖</div>
+      <div class="bot-avatar" id="chatBotAvatar"><svg viewBox="0 0 24 24" aria-hidden="true" class="ico-inline"><use href="#i-robot"/></svg></div>
       <div class="bot-info">
         <h3 id="chatBotName">Exmi</h3>
         <div class="bot-status"><div class="dot"></div>En línea</div>
@@ -724,46 +802,47 @@ mark{background:#f5a62330;color:var(--gold);border-radius:2px;}
     </div>
     <nav class="sidebar-nav">
       <div class="nav-label">Consultas rápidas</div>
-      <button class="nav-btn" onclick="quickSend('¿Cuál es la misión del colegio?')"><span class="ico">🎯</span>Misión</button>
-      <button class="nav-btn" onclick="quickSend('¿Cuál es la visión del colegio?')"><span class="ico">🔭</span>Visión</button>
-      <button class="nav-btn" onclick="quickSend('¿Cuáles son los valores del colegio?')"><span class="ico">💎</span>Valores</button>
-      <button class="nav-btn" onclick="quickSend('Lista de docentes y áreas')"><span class="ico">👩‍🏫</span>Docentes</button>
-      <button class="nav-btn" onclick="quickSend('Horario del grado 10')"><span class="ico">📅</span>Horarios</button>
-      <button class="nav-btn" onclick="quickSend('¿Cuáles son las materias?')"><span class="ico">📚</span>Materias</button>
-      <button class="nav-btn" onclick="quickSend('Proceso de admisión')"><span class="ico">📋</span>Admisión</button>
-      <button class="nav-btn" onclick="quickSend('Contactos del colegio')"><span class="ico">📞</span>Contactos</button>
-      <button class="nav-btn" onclick="quickSend('Horario de atención de docentes')"><span class="ico">🕐</span>Atención docentes</button>
-      <button class="nav-btn" onclick="quickSend('¿Dónde está ubicado el colegio?')"><span class="ico">📍</span>Ubicación</button>
+      <button class="nav-btn" onclick="quickSend('¿Cuál es la misión del colegio?')"><span class="ico"><svg viewBox="0 0 24 24" aria-hidden="true" class="ico-inline"><use href="#i-target"/></svg></span>Misión</button>
+      <button class="nav-btn" onclick="quickSend('¿Cuál es la visión del colegio?')"><span class="ico"><svg viewBox="0 0 24 24" aria-hidden="true" class="ico-inline"><use href="#i-telescope"/></svg></span>Visión</button>
+      <button class="nav-btn" onclick="quickSend('¿Cuáles son los valores del colegio?')"><span class="ico"><svg viewBox="0 0 24 24" aria-hidden="true" class="ico-inline"><use href="#i-gem"/></svg></span>Valores</button>
+      <button class="nav-btn" onclick="quickSend('Lista de docentes y áreas')"><span class="ico">‍<svg viewBox="0 0 24 24" aria-hidden="true" class="ico-inline"><use href="#i-school"/></svg></span>Docentes</button>
+      <button class="nav-btn" onclick="quickSend('Horario del grado 10')"><span class="ico"><svg viewBox="0 0 24 24" aria-hidden="true" class="ico-inline"><use href="#i-calendar"/></svg></span>Horarios</button>
+      <button class="nav-btn" onclick="quickSend('¿Cuáles son las materias?')"><span class="ico"><svg viewBox="0 0 24 24" aria-hidden="true" class="ico-inline"><use href="#i-book"/></svg></span>Materias</button>
+      <button class="nav-btn" onclick="quickSend('Proceso de admisión')"><span class="ico"><svg viewBox="0 0 24 24" aria-hidden="true" class="ico-inline"><use href="#i-clipboard"/></svg></span>Admisión</button>
+      <button class="nav-btn" onclick="quickSend('Contactos del colegio')"><span class="ico"><svg viewBox="0 0 24 24" aria-hidden="true" class="ico-inline"><use href="#i-phone"/></svg></span>Contactos</button>
+      <button class="nav-btn" onclick="quickSend('Horario de atención de docentes')"><span class="ico"><svg viewBox="0 0 24 24" aria-hidden="true" class="ico-inline"><use href="#i-clock"/></svg></span>Atención docentes</button>
+      <button class="nav-btn" onclick="quickSend('¿Dónde está ubicado el colegio?')"><span class="ico"><svg viewBox="0 0 24 24" aria-hidden="true" class="ico-inline"><use href="#i-pin"/></svg></span>Ubicación</button>
       <div class="nav-divider"></div>
-      <button class="nav-btn" onclick="goToAdmin()"><span class="ico">🔐</span>Panel docente</button>
+      <button class="nav-btn" onclick="goToAdmin()"><span class="ico"><svg viewBox="0 0 24 24" aria-hidden="true" class="ico-inline"><use href="#i-lock"/></svg></span>Panel docente</button>
     </nav>
     <div class="broadcast-mini">
-      <h4>📣 Difusión</h4>
+      <h4><svg viewBox="0 0 24 24" aria-hidden="true" class="ico-inline"><use href="#i-megaphone"/></svg> Difusión</h4>
       <textarea id="bcText" placeholder="Escribe el aviso institucional…"></textarea>
       <select id="bcTarget">
-        <option value="Todos los padres">📢 Todos los padres</option>
-        <option value="Preescolar">🌱 Preescolar</option>
-        <option value="Primaria">📗 Primaria (1°–5°)</option>
-        <option value="Secundaria">📘 Secundaria (6°–9°)</option>
-        <option value="Media">🎓 Media (10°–11°)</option>
+        <option value="Todos los padres"><svg viewBox="0 0 24 24" aria-hidden="true" class="ico-inline"><use href="#i-megaphone"/></svg> Todos los padres</option>
+        <option value="Preescolar"><svg viewBox="0 0 24 24" aria-hidden="true" class="ico-inline"><use href="#i-graduation"/></svg> Preescolar</option>
+        <option value="Primaria"><svg viewBox="0 0 24 24" aria-hidden="true" class="ico-inline"><use href="#i-book"/></svg> Primaria (1°–5°)</option>
+        <option value="Secundaria"><svg viewBox="0 0 24 24" aria-hidden="true" class="ico-inline"><use href="#i-book"/></svg> Secundaria (6°–9°)</option>
+        <option value="Media"><svg viewBox="0 0 24 24" aria-hidden="true" class="ico-inline"><use href="#i-graduation"/></svg> Media (10°–11°)</option>
         <option value="Grado 10°">Grado 10°</option>
         <option value="Grado 11°">Grado 11°</option>
       </select>
-      <button class="btn-broadcast" onclick="sendBroadcast()">📤 Enviar difusión</button>
+      <button class="btn-broadcast" onclick="sendBroadcast()"><svg viewBox="0 0 24 24" aria-hidden="true" class="ico-inline"><use href="#i-send"/></svg> Enviar difusión</button>
     </div>
   </aside>
 
   <!-- MAIN -->
   <div class="main-content">
     <div class="topbar">
-      <button id="sidebarToggle" onclick="toggleSidebar()" aria-label="Abrir menú">☰</button>
+      <button id="sidebarToggle" onclick="toggleSidebar()" aria-label="Abrir menú"><svg viewBox="0 0 24 24" aria-hidden="true" class="ico-inline"><use href="#i-menu"/></svg></button>
       <span class="topbar-title" id="topbarTitle">Chat con Exmi</span>
-      <button class="tab-pill active" onclick="switchTab('chat',this)">💬 Chat</button>
-      <button class="tab-pill" onclick="switchTab('horarios',this)">📅 Horarios</button>
-      <button class="tab-pill" onclick="switchTab('docentes',this)">👩‍🏫 Docentes</button>
-      <button class="tab-pill" onclick="switchTab('convivencia',this)">📖 Convivencia</button>
-      <button class="tab-pill" onclick="switchTab('contactos',this)">📞 Contactos</button>
-      <button class="btn-admin" onclick="goToAdmin()">🔐 Admin</button>
+      <button class="tab-pill active" onclick="switchTab('chat',this)"><svg viewBox="0 0 24 24" aria-hidden="true" class="ico-inline"><use href="#i-chat"/></svg> Chat</button>
+      <button class="tab-pill" onclick="switchTab('horarios',this)"><svg viewBox="0 0 24 24" aria-hidden="true" class="ico-inline"><use href="#i-calendar"/></svg> Horarios</button>
+      <button class="tab-pill" onclick="switchTab('docentes',this)"><svg viewBox="0 0 24 24" aria-hidden="true" class="ico-inline"><use href="#i-users"/></svg> Docentes</button>
+      <button class="tab-pill" onclick="switchTab('convivencia',this)"><svg viewBox="0 0 24 24" aria-hidden="true" class="ico-inline"><use href="#i-shield"/></svg> Convivencia</button>
+      <button class="tab-pill" onclick="switchTab('contactos',this)"><svg viewBox="0 0 24 24" aria-hidden="true" class="ico-inline"><use href="#i-phone"/></svg> Contactos</button>
+      <button class="tab-pill" onclick="switchTab('promociones',this)"><svg viewBox="0 0 24 24" aria-hidden="true" class="ico-inline"><use href="#i-graduation"/></svg> Promociones</button>
+      <button class="btn-admin" onclick="goToAdmin()"><svg viewBox="0 0 24 24" aria-hidden="true" class="ico-inline"><use href="#i-lock"/></svg> Admin</button>
     </div>
 
     <!-- VIEW: CHAT -->
@@ -771,7 +850,7 @@ mark{background:#f5a62330;color:var(--gold);border-radius:2px;}
       <div class="messages-area" id="messages"></div>
       <div class="input-bar">
         <input id="userInput" type="text" placeholder="Escribe tu consulta…" onkeydown="if(event.key==='Enter')sendMsg()"/>
-        <button class="send-btn" onclick="sendMsg()">➤</button>
+        <button class="send-btn" onclick="sendMsg()"><svg viewBox="0 0 24 24" aria-hidden="true" class="ico-inline"><use href="#i-send"/></svg></button>
       </div>
     </div>
 
@@ -786,6 +865,9 @@ mark{background:#f5a62330;color:var(--gold);border-radius:2px;}
 
     <!-- VIEW: CONTACTOS -->
     <div class="view module-view" id="view-contactos"></div>
+
+    <!-- VIEW: PROMOCIONES -->
+    <div class="view module-view" id="view-promociones"></div>
   </div>
 </div>
 
@@ -796,26 +878,26 @@ mark{background:#f5a62330;color:var(--gold);border-radius:2px;}
   <aside class="admin-sidebar">
     <div class="admin-sidebar-head">
       <div class="logo">
-        <div class="ic">🏫</div>
+        <div class="ic"><svg viewBox="0 0 24 24" aria-hidden="true" class="ico-inline"><use href="#i-school"/></svg></div>
         <div><h3>Panel Docente</h3><p>Albert Einstein</p></div>
       </div>
     </div>
     <nav class="admin-nav">
       <div class="admin-nav-label">General</div>
-      <button class="admin-nav-btn active" onclick="adminTab('dashboard',this)"><span class="ico">📊</span>Dashboard</button>
+      <button class="admin-nav-btn active" onclick="adminTab('dashboard',this)"><span class="ico"><svg viewBox="0 0 24 24" aria-hidden="true" class="ico-inline"><use href="#i-chart"/></svg></span>Dashboard</button>
       <div class="admin-nav-label">Gestión de datos</div>
-      <button class="admin-nav-btn" onclick="adminTab('conocimiento',this)"><span class="ico">🧠</span>Conocimiento</button>
-      <button class="admin-nav-btn" onclick="adminTab('docentes',this)"><span class="ico">👩‍🏫</span>Docentes</button>
-      <button class="admin-nav-btn" onclick="adminTab('horarios',this)"><span class="ico">📅</span>Horarios</button>
-      <button class="admin-nav-btn" onclick="adminTab('contactos',this)"><span class="ico">📞</span>Contactos</button>
+      <button class="admin-nav-btn" onclick="adminTab('conocimiento',this)"><span class="ico"><svg viewBox="0 0 24 24" aria-hidden="true" class="ico-inline"><use href="#i-brain"/></svg></span>Conocimiento</button>
+      <button class="admin-nav-btn" onclick="adminTab('docentes',this)"><span class="ico">‍<svg viewBox="0 0 24 24" aria-hidden="true" class="ico-inline"><use href="#i-school"/></svg></span>Docentes</button>
+      <button class="admin-nav-btn" onclick="adminTab('horarios',this)"><span class="ico"><svg viewBox="0 0 24 24" aria-hidden="true" class="ico-inline"><use href="#i-calendar"/></svg></span>Horarios</button>
+      <button class="admin-nav-btn" onclick="adminTab('contactos',this)"><span class="ico"><svg viewBox="0 0 24 24" aria-hidden="true" class="ico-inline"><use href="#i-phone"/></svg></span>Contactos</button>
       <div class="admin-nav-label">Recursos</div>
-      <button class="admin-nav-btn" onclick="adminTab('multimedia',this)"><span class="ico">🗂️</span>Multimedia</button>
+      <button class="admin-nav-btn" onclick="adminTab('multimedia',this)"><span class="ico"><svg viewBox="0 0 24 24" aria-hidden="true" class="ico-inline"><use href="#i-files"/></svg></span>Multimedia</button>
       <div class="admin-nav-label">Registros</div>
-      <button class="admin-nav-btn" onclick="adminTab('historial',this)"><span class="ico">🕓</span>Historial</button>
-      <button class="admin-nav-btn" onclick="adminTab('estadisticas',this)"><span class="ico">📈</span>Estadísticas</button>
+      <button class="admin-nav-btn" onclick="adminTab('historial',this)"><span class="ico"><svg viewBox="0 0 24 24" aria-hidden="true" class="ico-inline"><use href="#i-history"/></svg></span>Historial</button>
+      <button class="admin-nav-btn" onclick="adminTab('estadisticas',this)"><span class="ico"><svg viewBox="0 0 24 24" aria-hidden="true" class="ico-inline"><use href="#i-chart"/></svg></span>Estadísticas</button>
       <div class="admin-nav-label">Sistema</div>
-      <button class="admin-nav-btn" onclick="adminTab('interfaz',this)"><span class="ico">🎨</span>Interfaz</button>
-      <button class="admin-nav-btn" onclick="adminTab('seguridad',this)"><span class="ico">🔐</span>Seguridad</button>
+      <button class="admin-nav-btn" onclick="adminTab('interfaz',this)"><span class="ico"><svg viewBox="0 0 24 24" aria-hidden="true" class="ico-inline"><use href="#i-palette"/></svg></span>Interfaz</button>
+      <button class="admin-nav-btn" onclick="adminTab('seguridad',this)"><span class="ico"><svg viewBox="0 0 24 24" aria-hidden="true" class="ico-inline"><use href="#i-lock"/></svg></span>Seguridad</button>
     </nav>
     <div class="admin-footer">
       <div class="user-badge"><strong id="adminUserName">Admin</strong><span>Docente autorizado</span></div>
@@ -826,7 +908,7 @@ mark{background:#f5a62330;color:var(--gold);border-radius:2px;}
   <div class="admin-main">
     <div class="admin-topbar">
       <h2 id="adminPanelTitle">Dashboard</h2>
-      <button class="btn-sm" onclick="goToChat()">👁 Ver chatbot</button>
+      <button class="btn-sm" onclick="goToChat()"><svg viewBox="0 0 24 24" aria-hidden="true" class="ico-inline"><use href="#i-eye"/></svg> Ver chatbot</button>
     </div>
     <div class="admin-content">
 
@@ -834,11 +916,11 @@ mark{background:#f5a62330;color:var(--gold);border-radius:2px;}
       <div class="admin-panel active" id="panel-dashboard">
         <div class="stats-grid" id="statsGrid"></div>
         <div class="bar-chart">
-          <h4>📊 Consultas por fuente de respuesta</h4>
+          <h4><svg viewBox="0 0 24 24" aria-hidden="true" class="ico-inline"><use href="#i-chart"/></svg> Consultas por fuente de respuesta</h4>
           <div id="catChart"></div>
         </div>
         <div class="bar-chart">
-          <h4>🕐 Actividad por hora del día</h4>
+          <h4><svg viewBox="0 0 24 24" aria-hidden="true" class="ico-inline"><use href="#i-clock"/></svg> Actividad por hora del día</h4>
           <div id="hourChart"></div>
         </div>
       </div>
@@ -846,11 +928,11 @@ mark{background:#f5a62330;color:var(--gold);border-radius:2px;}
       <!-- CONOCIMIENTO -->
       <div class="admin-panel" id="panel-conocimiento">
         <div class="panel-header">
-          <h3>🧠 Base de conocimiento institucional</h3>
+          <h3><svg viewBox="0 0 24 24" aria-hidden="true" class="ico-inline"><use href="#i-brain"/></svg> Base de conocimiento institucional</h3>
           <button class="btn-add" onclick="openModal('conocimiento')">+ Agregar entrada</button>
         </div>
         <div class="filter-bar">
-          <input type="text" id="searchKB" placeholder="🔍 Buscar…" oninput="renderKBTable()"/>
+          <input type="text" id="searchKB" placeholder="<svg viewBox="0 0 24 24" aria-hidden="true" class="ico-inline"><use href="#i-search"/></svg> Buscar…" oninput="renderKBTable()"/>
           <select id="filterKBCat" onchange="renderKBTable()">
             <option value="">Todas las categorías</option>
             <option value="mision_vision">Misión / Visión</option>
@@ -872,7 +954,7 @@ mark{background:#f5a62330;color:var(--gold);border-radius:2px;}
       <!-- DOCENTES -->
       <div class="admin-panel" id="panel-docentes">
         <div class="panel-header">
-          <h3>👩‍🏫 Gestión de docentes</h3>
+          <h3>‍<svg viewBox="0 0 24 24" aria-hidden="true" class="ico-inline"><use href="#i-school"/></svg> Gestión de docentes</h3>
           <button class="btn-add" onclick="openModal('docente')">+ Agregar docente</button>
         </div>
         <div style="overflow-x:auto;">
@@ -886,7 +968,7 @@ mark{background:#f5a62330;color:var(--gold);border-radius:2px;}
       <!-- HORARIOS -->
       <div class="admin-panel" id="panel-horarios">
         <div class="panel-header">
-          <h3>📅 Gestión de horarios</h3>
+          <h3><svg viewBox="0 0 24 24" aria-hidden="true" class="ico-inline"><use href="#i-calendar"/></svg> Gestión de horarios</h3>
           <button class="btn-add" onclick="openModal('horario')">+ Agregar entrada</button>
         </div>
         <div style="overflow-x:auto;">
@@ -900,7 +982,7 @@ mark{background:#f5a62330;color:var(--gold);border-radius:2px;}
       <!-- CONTACTOS -->
       <div class="admin-panel" id="panel-contactos">
         <div class="panel-header">
-          <h3>📞 Directorio de contactos</h3>
+          <h3><svg viewBox="0 0 24 24" aria-hidden="true" class="ico-inline"><use href="#i-phone"/></svg> Directorio de contactos</h3>
           <button class="btn-add" onclick="openModal('contacto')">+ Agregar contacto</button>
         </div>
         <div style="overflow-x:auto;">
@@ -914,13 +996,14 @@ mark{background:#f5a62330;color:var(--gold);border-radius:2px;}
       <!-- MULTIMEDIA + DOCUMENTOS RAG -->
       <div class="admin-panel" id="panel-multimedia">
         <div class="panel-header">
-          <h3>🗂️ Imágenes</h3>
+          <h3><svg viewBox="0 0 24 24" aria-hidden="true" class="ico-inline"><use href="#i-files"/></svg> Imágenes</h3>
           <div style="display:flex;gap:8px;align-items:center;">
             <select id="mediaCategoria" style="padding:7px 10px;border-radius:8px;background:var(--surface2,#1a2233);color:inherit;border:1px solid var(--border,#2a3448);">
               <option value="comunicados">Comunicados</option>
               <option value="circulares">Circulares</option>
               <option value="horarios">Horarios</option>
               <option value="fotografias">Fotografías</option>
+              <option value="promociones">Promociones</option>
             </select>
             <button class="btn-add" onclick="document.getElementById('fileUploadInput').click()">+ Subir imagen</button>
           </div>
@@ -928,14 +1011,21 @@ mark{background:#f5a62330;color:var(--gold);border-radius:2px;}
         <input type="file" id="fileUploadInput" style="display:none" multiple accept="image/png,image/jpeg,image/gif,image/webp"
                onchange="handleFileUpload(event)"/>
         <div class="upload-zone" onclick="document.getElementById('fileUploadInput').click()">
-          <div class="u-ico">📂</div>
+          <div class="u-ico"><svg viewBox="0 0 24 24" aria-hidden="true" class="ico-inline"><use href="#i-folder"/></svg></div>
           <p>Haz clic para subir imágenes</p>
-          <span>PNG, JPG, GIF o WEBP · máx. 5 MB · circulares, horarios, comunicados</span>
+          <span>PNG, JPG, GIF o WEBP · máx. 5 MB · circulares, horarios, comunicados, promociones</span>
+        </div>
+        <div class="upload-zone" style="cursor:default;margin-top:10px;" onclick="event.stopPropagation()">
+          <div class="u-ico"><svg viewBox="0 0 24 24" aria-hidden="true" class="ico-inline"><use href="#i-target"/></svg></div>
+          <p><strong>Palabras clave para que el bot muestre la imagen</strong></p>
+          <span>Si un visitante escribe alguno de estos términos, Exmi responde y adjunta la imagen. Sepáralos por comas.</span>
+          <input type="text" id="mediaTrigger" placeholder="Ej.: promoción, graduación, graduados"
+                 style="margin-top:10px;max-width:520px;width:100%;padding:10px 12px;border-radius:8px;background:var(--card);color:inherit;border:1px solid var(--border);"/>
         </div>
         <div class="media-grid" id="mediaGrid"></div>
 
         <div class="panel-header" style="margin-top:32px;">
-          <h3>📚 Documentos del RAG</h3>
+          <h3><svg viewBox="0 0 24 24" aria-hidden="true" class="ico-inline"><use href="#i-book"/></svg> Documentos del RAG</h3>
           <button class="btn-add" onclick="openModal('documento')">+ Importar JSON</button>
         </div>
         <div style="overflow-x:auto;">
@@ -949,15 +1039,15 @@ mark{background:#f5a62330;color:var(--gold);border-radius:2px;}
       <!-- HISTORIAL -->
       <div class="admin-panel" id="panel-historial">
         <div class="panel-header">
-          <h3>🕓 Historial de interacciones</h3>
+          <h3><svg viewBox="0 0 24 24" aria-hidden="true" class="ico-inline"><use href="#i-history"/></svg> Historial de interacciones</h3>
           <div style="display:flex;gap:8px;">
             <button class="btn-sm blue" onclick="exportHistory('csv')">⬇ CSV</button>
             <button class="btn-sm blue" onclick="exportHistory('json')">⬇ JSON</button>
-            <button class="btn-sm danger" onclick="clearHistory()">🗑 Limpiar</button>
+            <button class="btn-sm danger" onclick="clearHistory()"><svg viewBox="0 0 24 24" aria-hidden="true" class="ico-inline"><use href="#i-trash"/></svg> Limpiar</button>
           </div>
         </div>
         <div class="filter-bar">
-          <input type="text" id="histSearch" placeholder="🔍 Buscar en historial…" oninput="debouncedHistory()"/>
+          <input type="text" id="histSearch" placeholder="<svg viewBox="0 0 24 24" aria-hidden="true" class="ico-inline"><use href="#i-search"/></svg> Buscar en historial…" oninput="debouncedHistory()"/>
           <select id="histCat" onchange="renderHistory()">
             <option value="">Todas las fuentes</option>
             <option value="IA+RAG (Gemini)">IA + RAG (Gemini)</option>
@@ -979,32 +1069,32 @@ mark{background:#f5a62330;color:var(--gold);border-radius:2px;}
 
       <!-- ESTADÍSTICAS -->
       <div class="admin-panel" id="panel-estadisticas">
-        <h3 style="margin-bottom:20px;">📈 Estadísticas del sistema</h3>
+        <h3 style="margin-bottom:20px;"><svg viewBox="0 0 24 24" aria-hidden="true" class="ico-inline"><use href="#i-chart"/></svg> Estadísticas del sistema</h3>
         <div class="stats-grid" id="statsGrid2"></div>
-        <div class="bar-chart"><h4>📊 Fuentes de respuesta más usadas</h4><div id="catChart2"></div></div>
-        <div class="bar-chart"><h4>📅 Consultas por día (últimos 7 días)</h4><div id="dayChart"></div></div>
+        <div class="bar-chart"><h4><svg viewBox="0 0 24 24" aria-hidden="true" class="ico-inline"><use href="#i-chart"/></svg> Fuentes de respuesta más usadas</h4><div id="catChart2"></div></div>
+        <div class="bar-chart"><h4><svg viewBox="0 0 24 24" aria-hidden="true" class="ico-inline"><use href="#i-calendar"/></svg> Consultas por día (últimos 7 días)</h4><div id="dayChart"></div></div>
       </div>
 
       <!-- INTERFAZ -->
       <div class="admin-panel" id="panel-interfaz">
-        <div class="panel-header"><h3>🎨 Gestión de interfaz del chatbot</h3></div>
+        <div class="panel-header"><h3><svg viewBox="0 0 24 24" aria-hidden="true" class="ico-inline"><use href="#i-palette"/></svg> Gestión de interfaz del chatbot</h3></div>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;align-items:start;">
           <!-- Foto de perfil de Exmi -->
           <div class="info-card">
-            <h4>🐾 Foto de perfil — Exmi</h4>
+            <h4><svg viewBox="0 0 24 24" aria-hidden="true" class="ico-inline"><use href="#i-paw"/></svg> Foto de perfil — Exmi</h4>
             <div class="avatar-upload-area">
-              <div class="avatar-preview" id="adminAvatarPreview">🤖</div>
+              <div class="avatar-preview" id="adminAvatarPreview"><svg viewBox="0 0 24 24" aria-hidden="true" class="ico-inline"><use href="#i-robot"/></svg></div>
               <div class="avatar-upload-info">
                 <p>Sube una imagen para el avatar de Exmi</p>
                 <input type="file" id="avatarFileInput" accept="image/*" style="display:none" onchange="handleAvatarUpload(event)"/>
-                <button class="btn-upload-av" onclick="document.getElementById('avatarFileInput').click()">📷 Cambiar foto</button>
-                <button class="btn-upload-av" style="margin-left:8px;" onclick="resetAvatar()">🔄 Restablecer</button>
+                <button class="btn-upload-av" onclick="document.getElementById('avatarFileInput').click()"><svg viewBox="0 0 24 24" aria-hidden="true" class="ico-inline"><use href="#i-image"/></svg> Cambiar foto</button>
+                <button class="btn-upload-av" style="margin-left:8px;" onclick="resetAvatar()"><svg viewBox="0 0 24 24" aria-hidden="true" class="ico-inline"><use href="#i-refresh"/></svg> Restablecer</button>
               </div>
             </div>
           </div>
           <!-- Nombre del bot -->
           <div class="info-card">
-            <h4>✏️ Nombre del asistente</h4>
+            <h4> Nombre del asistente</h4>
             <div class="modal-form-group" style="margin-top:10px;">
               <label>Nombre visible</label>
               <input type="text" id="botNameInput" placeholder="Exmi"/>
@@ -1017,15 +1107,15 @@ mark{background:#f5a62330;color:var(--gold);border-radius:2px;}
           </div>
           <!-- Colores -->
           <div class="info-card">
-            <h4>🎨 Paleta de colores</h4>
+            <h4><svg viewBox="0 0 24 24" aria-hidden="true" class="ico-inline"><use href="#i-palette"/></svg> Paleta de colores</h4>
             <p style="font-size:12px;color:var(--text3);margin-bottom:14px;">Personaliza los colores principales del chatbot.</p>
             <div class="color-group">
               <div class="color-item">
-                <input type="color" id="colorAccent" value="#f5a623" oninput="previewColor('accent',this.value)"/>
+                <input type="color" id="colorAccent" value="#c8102e" oninput="previewColor('accent',this.value)"/>
                 <label>Acento</label>
               </div>
               <div class="color-item">
-                <input type="color" id="colorBg" value="#0a0e17" oninput="previewColor('bg',this.value)"/>
+                <input type="color" id="colorBg" value="#0d1420" oninput="previewColor('bg',this.value)"/>
                 <label>Fondo</label>
               </div>
               <div class="color-item">
@@ -1038,7 +1128,7 @@ mark{background:#f5a62330;color:var(--gold);border-radius:2px;}
           </div>
           <!-- Visibilidad de secciones -->
           <div class="info-card">
-            <h4>👁 Secciones visibles en el chat</h4>
+            <h4><svg viewBox="0 0 24 24" aria-hidden="true" class="ico-inline"><use href="#i-eye"/></svg> Secciones visibles en el chat</h4>
             <p style="font-size:12px;color:var(--text3);margin-bottom:14px;">Controla qué pestañas aparecen para el usuario.</p>
             <div id="sectionsToggle" style="display:flex;flex-direction:column;gap:8px;"></div>
             <button class="btn-save" style="margin-top:14px;" onclick="saveSections()">Guardar</button>
@@ -1048,10 +1138,10 @@ mark{background:#f5a62330;color:var(--gold);border-radius:2px;}
 
       <!-- SEGURIDAD -->
       <div class="admin-panel" id="panel-seguridad">
-        <div class="panel-header"><h3>🔐 Gestión de acceso y seguridad</h3></div>
+        <div class="panel-header"><h3><svg viewBox="0 0 24 24" aria-hidden="true" class="ico-inline"><use href="#i-lock"/></svg> Gestión de acceso y seguridad</h3></div>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;">
           <div class="info-card">
-            <h4>👤 Datos de acceso</h4>
+            <h4><svg viewBox="0 0 24 24" aria-hidden="true" class="ico-inline"><use href="#i-user"/></svg> Datos de acceso</h4>
             <p style="font-size:12px;color:var(--text3);margin:6px 0 12px;">Actualiza el correo que usas para entrar y el nombre de usuario mostrado en el panel.</p>
             <div class="modal-form-group">
               <label>Correo de acceso</label>
@@ -1068,7 +1158,7 @@ mark{background:#f5a62330;color:var(--gold);border-radius:2px;}
             <button class="btn-save" onclick="updateAccountData()">Guardar datos de acceso</button>
           </div>
           <div class="info-card">
-            <h4>🔑 Cambiar contraseña de acceso</h4>
+            <h4><svg viewBox="0 0 24 24" aria-hidden="true" class="ico-inline"><use href="#i-key"/></svg> Cambiar contraseña de acceso</h4>
             <div class="modal-form-group" style="margin-top:12px;">
               <label>Contraseña actual</label>
               <input type="password" id="currPass" placeholder="Contraseña actual"/>
@@ -1084,7 +1174,7 @@ mark{background:#f5a62330;color:var(--gold);border-radius:2px;}
             <button class="btn-save" onclick="changeCredentials()">Actualizar contraseña</button>
           </div>
           <div class="info-card">
-            <h4>🤖 Configuración de IA</h4>
+            <h4><svg viewBox="0 0 24 24" aria-hidden="true" class="ico-inline"><use href="#i-robot"/></svg> Configuración de IA</h4>
             <div class="modal-form-group" style="margin-top:12px;">
               <label>API de IA</label>
               <input type="password" id="apiKeyInput" placeholder="Configurada en el backend" disabled/>
@@ -1092,8 +1182,8 @@ mark{background:#f5a62330;color:var(--gold);border-radius:2px;}
             <div class="modal-form-group">
               <label>Modo de respuesta IA</label>
               <select id="aiMode">
-                <option value="ia">🤖 IA + Base de conocimiento (recomendado)</option>
-                <option value="reglas">📋 Solo reglas (sin IA)</option>
+                <option value="ia"><svg viewBox="0 0 24 24" aria-hidden="true" class="ico-inline"><use href="#i-robot"/></svg> IA + Base de conocimiento (recomendado)</option>
+                <option value="reglas"><svg viewBox="0 0 24 24" aria-hidden="true" class="ico-inline"><use href="#i-clipboard"/></svg> Solo reglas (sin IA)</option>
               </select>
             </div>
             <button class="btn-save" onclick="saveAPIConfig()">Guardar configuración</button>
@@ -1141,11 +1231,11 @@ let KB = [], DOCENTES = [], HORARIOS = [], CONTACTOS = [], IMAGES = [], DOCS = [
 const DEFAULT_UI = {
   botName: 'Exmi',
   botAvatar: null,
-  welcomeMsg: '¡Bienvenido al Colegio Albert Einstein! 🎓\nSoy Exmi, tu asistente escolar. Puedo ayudarte con horarios, docentes, convivencia, contactos y más.',
-  accentColor: '#f5a623',
-  bgColor: '#0a0e17',
-  surfaceColor: '#111827',
-  sections: { horarios: true, docentes: true, convivencia: true, contactos: true },
+  welcomeMsg: '¡Bienvenido al Colegio Albert Einstein! <svg viewBox="0 0 24 24" aria-hidden="true" class="ico-inline"><use href="#i-graduation"/></svg>\nSoy Exmi, tu asistente escolar. Puedo ayudarte con horarios, docentes, convivencia, contactos y más.',
+  accentColor: '#c8102e',
+  bgColor: '#0d1420',
+  surfaceColor: '#131d2e',
+  sections: { horarios: true, docentes: true, convivencia: true, contactos: true, promociones: true, galeria: true },
   aiMode: 'ia'
 };
 let UI_CONFIG = { ...DEFAULT_UI, sections: { ...DEFAULT_UI.sections } };
@@ -1365,8 +1455,8 @@ function applyUIConfig(){
     avEl.innerHTML = `<img src="${esc(UI_CONFIG.botAvatar)}" alt="avatar"/>`;
     if(avMsg) avMsg.innerHTML = `<img src="${esc(UI_CONFIG.botAvatar)}" alt="avatar"/>`;
   } else {
-    avEl.textContent = '🤖';
-    if(avMsg) avMsg.textContent = '🤖';
+    avEl.textContent = '<svg viewBox="0 0 24 24" aria-hidden="true" class="ico-inline"><use href="#i-robot"/></svg>';
+    if(avMsg) avMsg.textContent = '<svg viewBox="0 0 24 24" aria-hidden="true" class="ico-inline"><use href="#i-robot"/></svg>';
   }
 
   const tabs = document.querySelectorAll('.tab-pill');
@@ -1382,7 +1472,7 @@ function applyUIConfig(){
 ═══════════════════════════════════════════════════════════════ */
 function renderAvatarPreview(){
   const el = document.getElementById('adminAvatarPreview');
-  el.innerHTML = UI_CONFIG.botAvatar ? `<img src="${esc(UI_CONFIG.botAvatar)}" alt="avatar"/>` : '🤖';
+  el.innerHTML = UI_CONFIG.botAvatar ? `<img src="${esc(UI_CONFIG.botAvatar)}" alt="avatar"/>` : '<svg viewBox="0 0 24 24" aria-hidden="true" class="ico-inline"><use href="#i-robot"/></svg>';
 }
 
 async function handleAvatarUpload(e){
@@ -1464,8 +1554,8 @@ async function saveSections(){
 function renderSectionsToggle(){
   const cont = document.getElementById('sectionsToggle');
   const sects = [
-    { key:'horarios', label:'📅 Horarios' }, { key:'docentes', label:'👩‍🏫 Docentes' },
-    { key:'convivencia', label:'📖 Convivencia' }, { key:'contactos', label:'📞 Contactos' }
+    { key:'horarios', label:'<svg viewBox="0 0 24 24" aria-hidden="true" class="ico-inline"><use href="#i-calendar"/></svg> Horarios' }, { key:'docentes', label:'‍<svg viewBox="0 0 24 24" aria-hidden="true" class="ico-inline"><use href="#i-school"/></svg> Docentes' },
+    { key:'convivencia', label:' Convivencia' }, { key:'contactos', label:'<svg viewBox="0 0 24 24" aria-hidden="true" class="ico-inline"><use href="#i-phone"/></svg> Contactos' }
   ];
   cont.innerHTML = sects.map(s => `
     <label style="display:flex;align-items:center;gap:10px;font-size:13px;cursor:pointer;">
@@ -1552,6 +1642,8 @@ const VIEW_RENDERERS = {
 };
 
 async function renderPublicView(name){
+  // Promociones es una galería de imágenes: usa su propio endpoint.
+  if(name === 'promociones'){ renderPromociones(); return; }
   const source = VIEW_SOURCES[name];
   if(!source) return;
   const el = document.getElementById('view-' + name);
@@ -1566,27 +1658,56 @@ async function renderPublicView(name){
   VIEW_RENDERERS[name]();
 }
 
+/* Galería de promociones: imágenes con categoría "promociones" */
+let _promocionesCache = null;
+async function renderPromociones(){
+  const el = document.getElementById('view-promociones');
+  el.innerHTML = '<p style="color:var(--text3)">Cargando…</p>';
+  try{
+    if(!_promocionesCache){
+      const r = await fetch(`${API_BASE}/public/imagenes?categoria=promociones`);
+      if(!r.ok) throw new Error(`HTTP ${r.status}`);
+      _promocionesCache = await r.json();
+    }
+    const imgs = _promocionesCache || [];
+    el.innerHTML = `
+      <h2><svg viewBox="0 0 24 24" aria-hidden="true" class="ico-inline"><use href="#i-graduation"/></svg> Promociones</h2>
+      ${imgs.length ? `
+        <div class="promo-grid">
+          ${imgs.map(im => `
+            <figure class="promo-card">
+              <img src="${esc(assetUrl(im.ruta))}" alt="${esc(im.descripcion || 'Promoción')}" loading="lazy"/>
+              ${im.descripcion ? `<figcaption>${esc(im.descripcion)}</figcaption>` : ''}
+            </figure>`).join('')}
+        </div>`
+        : '<p style="color:var(--text3)">Todavía no hay imágenes de promociones. Los docentes pueden subirlas desde el panel.</p>'}`;
+  }catch(e){
+    console.error('[Exmi] No se pudo cargar la galería de promociones', e);
+    el.innerHTML = '<p style="color:var(--text3)">No se pudo cargar la galería de promociones.</p>';
+  }
+}
+
 function renderPublicHorarios(){
   const el = document.getElementById('view-horarios');
   const grados = [...new Set(HORARIOS.map(h => h.grado))].sort((a, b) => parseInt(a) - parseInt(b));
-  el.innerHTML = `<h2>📅 Horarios por grado</h2>` + (grados.length === 0
+  el.innerHTML = `<h2><svg viewBox="0 0 24 24" aria-hidden="true" class="ico-inline"><use href="#i-calendar"/></svg> Horarios por grado</h2>` + (grados.length === 0
     ? '<p style="color:var(--text3)">No hay horarios registrados.</p>'
     : `<div class="sched-grid">${grados.map(g => {
         const clases = HORARIOS.filter(h => h.grado === g);
         return `<div class="sched-card"><div class="sh">Grado ${esc(g)}</div>${
-          clases.map(c => `<div class="sched-row"><span class="st">${esc(c.hora)}</span><span>${c.materia === 'Descanso' ? '☕ Descanso' : esc(c.materia)}</span></div>`).join('')
+          clases.map(c => `<div class="sched-row"><span class="st">${esc(c.hora)}</span><span>${c.materia === 'Descanso' ? ' Descanso' : esc(c.materia)}</span></div>`).join('')
         }</div>`;
       }).join('')}</div>`);
 }
 
 function renderPublicDocentes(){
   const el = document.getElementById('view-docentes');
-  el.innerHTML = `<h2>👩‍🏫 Cuerpo docente</h2><div style="overflow-x:auto"><table class="data-table">
+  el.innerHTML = `<h2>‍<svg viewBox="0 0 24 24" aria-hidden="true" class="ico-inline"><use href="#i-school"/></svg> Cuerpo docente</h2><div style="overflow-x:auto"><table class="data-table">
     <thead><tr><th>Nombre</th><th>Área</th><th>Titulación</th><th>Grados</th><th>Atención</th></tr></thead>
     <tbody>${DOCENTES.map(d => `<tr>
       <td><strong>${esc(d.nombre)}</strong></td>
       <td><span class="badge b">${esc(d.area)}</span></td>
-      <td>${esc(d.titulo)}</td><td>${esc(d.grados)}</td><td>🕐 ${esc(d.atencion)}</td>
+      <td>${esc(d.titulo)}</td><td>${esc(d.grados)}</td><td><svg viewBox="0 0 24 24" aria-hidden="true" class="ico-inline"><use href="#i-clock"/></svg> ${esc(d.atencion)}</td>
     </tr>`).join('')}</tbody>
   </table></div>`;
 }
@@ -1594,14 +1715,14 @@ function renderPublicDocentes(){
 function renderPublicConvivencia(){
   const el = document.getElementById('view-convivencia');
   const items = KB.filter(k => k.cat === 'convivencia');
-  el.innerHTML = `<h2>📖 Manual de convivencia</h2>${
-    items.map(i => `<div class="info-card"><h4>📌 ${esc(i.pregunta)}</h4><p>${esc(i.respuesta)}</p></div>`).join('')
+  el.innerHTML = `<h2> Manual de convivencia</h2>${
+    items.map(i => `<div class="info-card"><h4> ${esc(i.pregunta)}</h4><p>${esc(i.respuesta)}</p></div>`).join('')
   }${items.length === 0 ? '<p style="color:var(--text3)">No hay entradas de convivencia registradas.</p>' : ''}`;
 }
 
 function renderPublicContactos(){
   const el = document.getElementById('view-contactos');
-  el.innerHTML = `<h2>📞 Directorio de contactos</h2><div style="overflow-x:auto"><table class="data-table">
+  el.innerHTML = `<h2><svg viewBox="0 0 24 24" aria-hidden="true" class="ico-inline"><use href="#i-phone"/></svg> Directorio de contactos</h2><div style="overflow-x:auto"><table class="data-table">
     <thead><tr><th>Cargo</th><th>Nombre</th><th>Contacto</th><th>Horario</th></tr></thead>
     <tbody>${CONTACTOS.map(c => `<tr>
       <td><span class="badge p">${esc(c.cargo)}</span></td>
@@ -1618,11 +1739,11 @@ function appendMsg(html, type){
   const row = document.createElement('div');
   row.className = `msg-row ${type}`;
 
-  const avBot = UI_CONFIG.botAvatar ? `<img src="${esc(UI_CONFIG.botAvatar)}" alt="av"/>` : '🤖';
+  const avBot = UI_CONFIG.botAvatar ? `<img src="${esc(UI_CONFIG.botAvatar)}" alt="av"/>` : '<svg viewBox="0 0 24 24" aria-hidden="true" class="ico-inline"><use href="#i-robot"/></svg>';
 
   const avEl = document.createElement('div');
   avEl.className = `msg-avatar ${type === 'bot' ? 'bot-av' : 'user-av'}`;
-  avEl.innerHTML = type === 'bot' ? avBot : '👤';
+  avEl.innerHTML = type === 'bot' ? avBot : '<svg viewBox="0 0 24 24" aria-hidden="true" class="ico-inline"><use href="#i-user"/></svg>';
 
   const wrap = document.createElement('div');
   wrap.className = 'msg-wrap';
@@ -1641,11 +1762,39 @@ function appendMsg(html, type){
   area.scrollTop = area.scrollHeight;
 }
 
+/* Imágenes adjuntas a la respuesta del bot (pregunta disparadora) */
+function appendImages(imgs){
+  const area = document.getElementById('messages');
+  const last = area.lastElementChild;
+  const wrap = document.createElement('div');
+  wrap.className = 'msg-imgs';
+  wrap.innerHTML = imgs.map(im => `
+    <figure class="msg-img">
+      <img src="${esc(assetUrl(im.ruta))}" alt="${esc(im.descripcion || 'Imagen del colegio')}" loading="lazy"/>
+      ${im.descripcion ? `<figcaption>${esc(im.descripcion)}</figcaption>` : ''}
+    </figure>`).join('');
+  if(last) last.querySelector('.msg-wrap')?.appendChild(wrap);
+  else area.appendChild(wrap);
+  area.scrollTop = area.scrollHeight;
+}
+
+/* Identificador único y anónimo por navegador: evita que dos visitantes
+   anónimos compartan el mismo historial de conversación. */
+const VISITOR_KEY = 'exmi_visitor_id';
+function visitorId(){
+  let id = localStorage.getItem(VISITOR_KEY);
+  if(!id){
+    id = 'v-' + (crypto.randomUUID ? crypto.randomUUID() : String(Math.random()).slice(2) + Date.now().toString(36));
+    localStorage.setItem(VISITOR_KEY, id);
+  }
+  return id;
+}
+
 function showTyping(){
   const area = document.getElementById('messages');
   const row = document.createElement('div');
   row.className = 'msg-row bot'; row.id = 'typing';
-  const avBot = UI_CONFIG.botAvatar ? `<img src="${esc(UI_CONFIG.botAvatar)}" alt="av"/>` : '🤖';
+  const avBot = UI_CONFIG.botAvatar ? `<img src="${esc(UI_CONFIG.botAvatar)}" alt="av"/>` : '<svg viewBox="0 0 24 24" aria-hidden="true" class="ico-inline"><use href="#i-robot"/></svg>';
   row.innerHTML = `<div class="msg-avatar bot-av">${avBot}</div><div class="msg-wrap"><div class="msg-time">${ts()}</div><div class="bubble bot"><div class="typing-dots"><span></span><span></span><span></span></div></div></div>`;
   area.appendChild(row);
   area.scrollTop = area.scrollHeight;
@@ -1687,22 +1836,26 @@ async function sendMsg(){
   showTyping();
 
   let respText = '';
+  let respImages = [];
   try{
     const response = await fetch(`${API_BASE}/chat/`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ pregunta: msg, usuario: currentAdmin || 'anonimo' })
+      body: JSON.stringify({ pregunta: msg, usuario: currentAdmin || visitorId() })
     });
     if(!response.ok) throw new Error(`Error HTTP: ${response.status}`);
     const data = await response.json();
     respText = data.respuesta || 'No recibí una respuesta del servidor.';
+    respImages = Array.isArray(data.imagenes) ? data.imagenes : [];
   }catch(error){
     console.error('Error conectando con FastAPI:', error);
     respText = 'No pude conectarme con el servidor. Verifica que FastAPI esté ejecutándose.';
+    respImages = [];
   }finally{
     removeTyping();
   }
   appendMsg(renderBotText(respText), 'bot');
+  if(respImages.length) appendImages(respImages);
   // El historial lo guarda el backend (tabla chat_history); aquí no se duplica.
 }
 
@@ -1719,7 +1872,7 @@ function sendBroadcast(){
   if(!msg){ toast('Escribe el mensaje antes de enviar', 'error'); return; }
   switchTab('chat', document.querySelector('.tab-pill'));
   setTimeout(() => {
-    const html = `<div class="bc-bubble"><div class="bc-ico">📣</div><div><strong>AVISO INSTITUCIONAL — ${esc(label.toUpperCase())}</strong><br>${esc(msg).replace(/\n/g, '<br>')}<br><br><small style="color:var(--text3)">📅 ${esc(dateFull())} · Colegio Albert Einstein</small></div></div>`;
+    const html = `<div class="bc-bubble"><div class="bc-ico"><svg viewBox="0 0 24 24" aria-hidden="true" class="ico-inline"><use href="#i-megaphone"/></svg></div><div><strong>AVISO INSTITUCIONAL — ${esc(label.toUpperCase())}</strong><br>${esc(msg).replace(/\n/g, '<br>')}<br><br><small style="color:var(--text3)"><svg viewBox="0 0 24 24" aria-hidden="true" class="ico-inline"><use href="#i-calendar"/></svg> ${esc(dateFull())} · Colegio Albert Einstein</small></div></div>`;
     appendMsg(html, 'bot');
     document.getElementById('bcText').value = '';
   }, 300);
@@ -1781,12 +1934,12 @@ async function renderDashboard(){
   const top = st ? Object.entries(st.por_fuente)[0] : null;
 
   document.getElementById('statsGrid').innerHTML = `
-    <div class="stat-card gold"><div class="s-ico">💬</div><div class="s-label">Total consultas</div><div class="s-val">${total}</div></div>
-    <div class="stat-card green"><div class="s-ico">📅</div><div class="s-label">Hoy</div><div class="s-val">${hoy}</div></div>
-    <div class="stat-card blue"><div class="s-ico">👩‍🏫</div><div class="s-label">Docentes</div><div class="s-val">${DOCENTES.length}</div></div>
-    <div class="stat-card purple"><div class="s-ico">🧠</div><div class="s-label">Entradas KB</div><div class="s-val">${KB.length}</div><div class="s-sub">Base de conocimiento</div></div>
-    <div class="stat-card gold"><div class="s-ico">📂</div><div class="s-label">Imágenes</div><div class="s-val">${IMAGES.length}</div></div>
-    <div class="stat-card green"><div class="s-ico">🏆</div><div class="s-label">Fuente principal</div><div class="s-val" style="font-size:16px;">${top ? esc(top[0]) : '—'}</div><div class="s-sub">${top ? top[1] + ' consultas' : ''}</div></div>
+    <div class="stat-card gold"><div class="s-ico"><svg viewBox="0 0 24 24" aria-hidden="true" class="ico-inline"><use href="#i-chat"/></svg></div><div class="s-label">Total consultas</div><div class="s-val">${total}</div></div>
+    <div class="stat-card green"><div class="s-ico"><svg viewBox="0 0 24 24" aria-hidden="true" class="ico-inline"><use href="#i-calendar"/></svg></div><div class="s-label">Hoy</div><div class="s-val">${hoy}</div></div>
+    <div class="stat-card blue"><div class="s-ico">‍<svg viewBox="0 0 24 24" aria-hidden="true" class="ico-inline"><use href="#i-school"/></svg></div><div class="s-label">Docentes</div><div class="s-val">${DOCENTES.length}</div></div>
+    <div class="stat-card purple"><div class="s-ico"><svg viewBox="0 0 24 24" aria-hidden="true" class="ico-inline"><use href="#i-brain"/></svg></div><div class="s-label">Entradas KB</div><div class="s-val">${KB.length}</div><div class="s-sub">Base de conocimiento</div></div>
+    <div class="stat-card gold"><div class="s-ico"><svg viewBox="0 0 24 24" aria-hidden="true" class="ico-inline"><use href="#i-folder"/></svg></div><div class="s-label">Imágenes</div><div class="s-val">${IMAGES.length}</div></div>
+    <div class="stat-card green"><div class="s-ico"></div><div class="s-label">Fuente principal</div><div class="s-val" style="font-size:16px;">${top ? esc(top[0]) : '—'}</div><div class="s-sub">${top ? top[1] + ' consultas' : ''}</div></div>
   `;
   renderCatChart('catChart', st?.por_fuente || {});
   renderHourChart(st?.por_hora || {});
@@ -1795,7 +1948,7 @@ async function renderDashboard(){
 function renderCatChart(id, counts){
   const sorted = Object.entries(counts).sort((a, b) => b[1] - a[1]).slice(0, 8);
   const max = sorted[0]?.[1] || 1;
-  const colors = ['#f5a623','#22c55e','#3b82f6','#a855f7','#06b6d4','#f97316','#ef4444','#84cc16'];
+  const colors = ['#c8102e','#1e3a5f','#3b82f6','#22c55e','#3b82f6','#a855f7','#06b6d4','#f97316','#ef4444','#84cc16'];
   const el = document.getElementById(id);
   if(!el) return;
   el.innerHTML = sorted.length === 0
@@ -1826,10 +1979,10 @@ function renderHourChart(hours){
 async function renderStats(){
   const st = await fetchStats();
   document.getElementById('statsGrid2').innerHTML = `
-    <div class="stat-card gold"><div class="s-ico">💬</div><div class="s-label">Total interacciones</div><div class="s-val">${st?.total_consultas ?? 0}</div></div>
-    <div class="stat-card blue"><div class="s-ico">🧠</div><div class="s-label">Entradas KB</div><div class="s-val">${KB.length}</div></div>
-    <div class="stat-card green"><div class="s-ico">👩‍🏫</div><div class="s-label">Docentes</div><div class="s-val">${DOCENTES.length}</div></div>
-    <div class="stat-card purple"><div class="s-ico">📅</div><div class="s-label">Entradas horario</div><div class="s-val">${HORARIOS.length}</div></div>
+    <div class="stat-card gold"><div class="s-ico"><svg viewBox="0 0 24 24" aria-hidden="true" class="ico-inline"><use href="#i-chat"/></svg></div><div class="s-label">Total interacciones</div><div class="s-val">${st?.total_consultas ?? 0}</div></div>
+    <div class="stat-card blue"><div class="s-ico"><svg viewBox="0 0 24 24" aria-hidden="true" class="ico-inline"><use href="#i-brain"/></svg></div><div class="s-label">Entradas KB</div><div class="s-val">${KB.length}</div></div>
+    <div class="stat-card green"><div class="s-ico">‍<svg viewBox="0 0 24 24" aria-hidden="true" class="ico-inline"><use href="#i-school"/></svg></div><div class="s-label">Docentes</div><div class="s-val">${DOCENTES.length}</div></div>
+    <div class="stat-card purple"><div class="s-ico"><svg viewBox="0 0 24 24" aria-hidden="true" class="ico-inline"><use href="#i-calendar"/></svg></div><div class="s-label">Entradas horario</div><div class="s-val">${HORARIOS.length}</div></div>
   `;
   renderCatChart('catChart2', st?.por_fuente || {});
   const days = Object.entries(st?.por_dia || {});
@@ -1857,8 +2010,8 @@ function renderKBTable(){
     <td style="max-width:200px">${highlight(k.pregunta, q)}</td>
     <td style="max-width:300px;font-size:12px;color:var(--text2)">${highlight(k.respuesta.substring(0, 100), q)}…</td>
     <td><div class="actions">
-      <button class="btn-sm" onclick="editEntry('conocimiento',${k.id})">✏️</button>
-      <button class="btn-sm danger" onclick="deleteEntry('kb',${k.id})">🗑</button>
+      <button class="btn-sm" onclick="editEntry('conocimiento',${k.id})"></button>
+      <button class="btn-sm danger" onclick="deleteEntry('kb',${k.id})"><svg viewBox="0 0 24 24" aria-hidden="true" class="ico-inline"><use href="#i-trash"/></svg></button>
     </div></td>
   </tr>`).join('');
 }
@@ -1867,10 +2020,10 @@ function renderDocentesAdmin(){
   document.getElementById('docentesAdminBody').innerHTML = DOCENTES.map(d => `<tr>
     <td><strong>${esc(d.nombre)}</strong></td>
     <td><span class="badge b">${esc(d.area)}</span></td>
-    <td>${esc(d.titulo)}</td><td>${esc(d.grados)}</td><td>🕐 ${esc(d.atencion)}</td>
+    <td>${esc(d.titulo)}</td><td>${esc(d.grados)}</td><td><svg viewBox="0 0 24 24" aria-hidden="true" class="ico-inline"><use href="#i-clock"/></svg> ${esc(d.atencion)}</td>
     <td><div class="actions">
-      <button class="btn-sm" onclick="editEntry('docente',${d.id})">✏️</button>
-      <button class="btn-sm danger" onclick="deleteEntry('docentes',${d.id})">🗑</button>
+      <button class="btn-sm" onclick="editEntry('docente',${d.id})"></button>
+      <button class="btn-sm danger" onclick="deleteEntry('docentes',${d.id})"><svg viewBox="0 0 24 24" aria-hidden="true" class="ico-inline"><use href="#i-trash"/></svg></button>
     </div></td>
   </tr>`).join('');
 }
@@ -1882,8 +2035,8 @@ function renderHorariosAdmin(){
     <td style="font-family:var(--mono);font-size:12px;">${esc(h.hora)}</td>
     <td>${esc(h.materia)}</td><td>${esc(h.docente)}</td>
     <td><div class="actions">
-      <button class="btn-sm" onclick="editEntry('horario',${h.id})">✏️</button>
-      <button class="btn-sm danger" onclick="deleteEntry('horarios',${h.id})">🗑</button>
+      <button class="btn-sm" onclick="editEntry('horario',${h.id})"></button>
+      <button class="btn-sm danger" onclick="deleteEntry('horarios',${h.id})"><svg viewBox="0 0 24 24" aria-hidden="true" class="ico-inline"><use href="#i-trash"/></svg></button>
     </div></td>
   </tr>`).join('');
 }
@@ -1893,8 +2046,8 @@ function renderContactosAdmin(){
     <td><span class="badge p">${esc(c.cargo)}</span></td>
     <td>${esc(c.nombre)}</td><td>${esc(c.contacto)}</td><td>${esc(c.horario)}</td>
     <td><div class="actions">
-      <button class="btn-sm" onclick="editEntry('contacto',${c.id})">✏️</button>
-      <button class="btn-sm danger" onclick="deleteEntry('contactos',${c.id})">🗑</button>
+      <button class="btn-sm" onclick="editEntry('contacto',${c.id})"></button>
+      <button class="btn-sm danger" onclick="deleteEntry('contactos',${c.id})"><svg viewBox="0 0 24 24" aria-hidden="true" class="ico-inline"><use href="#i-trash"/></svg></button>
     </div></td>
   </tr>`).join('');
 }
@@ -1906,9 +2059,13 @@ function renderMedia(){
   document.getElementById('mediaGrid').innerHTML = IMAGES.map(m => `
     <div class="media-card">
       <div class="mc-preview"><img src="${esc(assetUrl(m.ruta))}" alt="" loading="lazy" style="width:100%;height:100%;object-fit:cover;"></div>
-      <div class="mc-info"><p>${esc(m.nombre_original || m.nombre)}</p><span>${esc(m.categoria || '')} · ${formatSize(m.tamano || 0)}</span></div>
+      <div class="mc-info">
+        <p>${esc(m.nombre_original || m.nombre)}</p>
+        <span>${esc(m.categoria || '')} · ${formatSize(m.tamano || 0)}</span>
+        ${m.pregunta_disparadora ? `<span class="mc-trigger">Palabras: ${esc(m.pregunta_disparadora)}</span>` : ''}
+      </div>
       <div class="mc-actions">
-        <button class="btn-sm danger" onclick="deleteMedia(${m.id})">🗑 Eliminar</button>
+        <button class="btn-sm danger" onclick="deleteMedia(${m.id})"><svg viewBox="0 0 24 24" aria-hidden="true" class="ico-inline"><use href="#i-trash"/></svg> Eliminar</button>
       </div>
     </div>`).join('') || '<p style="color:var(--text3);font-size:13px;">No hay imágenes cargadas.</p>';
 }
@@ -1922,10 +2079,12 @@ async function handleFileUpload(e){
   const files = Array.from(e.target.files);
   e.target.value = '';
   const categoria = document.getElementById('mediaCategoria').value;
+  const trigger = (document.getElementById('mediaTrigger')?.value || '').trim();
   for(const file of files){
     const fd = new FormData();
     fd.append('file', file);
     fd.append('categoria', categoria);
+    if(trigger) fd.append('pregunta_disparadora', trigger);
     try{
       await apiFetch('/admin/imagenes', { method:'POST', body: fd });
       toast(`${file.name} cargada`, 'success');
@@ -1954,8 +2113,8 @@ function renderDocs(){
     <td>${d.chunk_count}</td>
     <td><input type="checkbox" ${d.is_active ? 'checked' : ''} onchange="toggleDoc(${d.id}, this)" style="width:16px;height:16px;accent-color:var(--gold)" title="Si se desactiva, el chatbot deja de usar este documento"/></td>
     <td><div class="actions">
-      <button class="btn-sm" onclick="openChunks(${d.id})">👁 Fragmentos</button>
-      <button class="btn-sm danger" onclick="deleteDoc(${d.id})">🗑</button>
+      <button class="btn-sm" onclick="openChunks(${d.id})"><svg viewBox="0 0 24 24" aria-hidden="true" class="ico-inline"><use href="#i-eye"/></svg> Fragmentos</button>
+      <button class="btn-sm danger" onclick="deleteDoc(${d.id})"><svg viewBox="0 0 24 24" aria-hidden="true" class="ico-inline"><use href="#i-trash"/></svg></button>
     </div></td>
   </tr>`).join('') || '<tr><td colspan="6" style="color:var(--text3);text-align:center;padding:20px;">No hay documentos importados.</td></tr>';
 }
@@ -2000,7 +2159,7 @@ function openChunks(id){
   modalContext = { type:'chunks' };
   document.getElementById('modalTitle').textContent = `Fragmentos — ${d ? d.name : ''}`;
   document.getElementById('modalBody').innerHTML = `
-    <div class="modal-form-group"><input id="chunkSearch" placeholder="🔍 Buscar en los fragmentos…" oninput="chunkSearchInput(this.value)"/></div>
+    <div class="modal-form-group"><input id="chunkSearch" placeholder="<svg viewBox="0 0 24 24" aria-hidden="true" class="ico-inline"><use href="#i-search"/></svg> Buscar en los fragmentos…" oninput="chunkSearchInput(this.value)"/></div>
     <div id="chunkList" style="max-height:340px;overflow-y:auto;font-size:12px;"></div>
     <div id="chunkPager" style="padding-top:10px;font-size:12px;color:var(--text3);display:flex;gap:8px;align-items:center;"></div>`;
   setModalSaveVisible(false);
@@ -2071,7 +2230,7 @@ async function loadHistoryPage(){
       <td style="max-width:220px;">${highlight(h.pregunta, q)}</td>
       <td><span class="badge g">${esc(h.fuente || '—')}</span>${h.tiempo_respuesta != null ? `<br><span style="font-size:10px;color:var(--text3);">${h.tiempo_respuesta}s · ${esc(h.usuario)}</span>` : ''}</td>
       <td style="max-width:280px;font-size:12px;color:var(--text2);">${esc(truncate(h.respuesta, 160))}</td>
-      <td><button class="btn-sm danger" onclick="deleteHistEntry(${h.id})">🗑</button></td>
+      <td><button class="btn-sm danger" onclick="deleteHistEntry(${h.id})"><svg viewBox="0 0 24 24" aria-hidden="true" class="ico-inline"><use href="#i-trash"/></svg></button></td>
     </tr>`).join('') || '<tr><td colspan="5" style="color:var(--text3);text-align:center;padding:20px;">No hay registros.</td></tr>';
 
     const shown = Math.min((histPage - 1) * HIST_PER_PAGE + data.items.length, histTotal);
@@ -2253,7 +2412,7 @@ let toastTimer;
 function toast(msg, type = 'success'){
   const el = document.getElementById('toast');
   el.className = `toast show ${type}`;
-  el.innerHTML = `${type === 'success' ? '✅' : '❌'} ${esc(msg)}`;
+  el.innerHTML = `${type === 'success' ? '' : ''} ${esc(msg)}`;
   clearTimeout(toastTimer);
   toastTimer = setTimeout(() => el.classList.remove('show'), 3500);
 }
@@ -2269,7 +2428,7 @@ window.addEventListener('load', async () => {
   showScreen('chat');
   setTimeout(() => {
     const html = esc(UI_CONFIG.welcomeMsg).replace(/\n/g, '<br>') + '<br><br>' +
-      `<span class="badge">📅 Horarios</span> <span class="badge g">👩‍🏫 Docentes</span> <span class="badge b">📖 Convivencia</span> <span class="badge p">📞 Contactos</span>`;
+      `<span class="badge"><svg viewBox="0 0 24 24" aria-hidden="true" class="ico-inline"><use href="#i-calendar"/></svg> Horarios</span> <span class="badge g">‍<svg viewBox="0 0 24 24" aria-hidden="true" class="ico-inline"><use href="#i-school"/></svg> Docentes</span> <span class="badge b"> Convivencia</span> <span class="badge p"><svg viewBox="0 0 24 24" aria-hidden="true" class="ico-inline"><use href="#i-phone"/></svg> Contactos</span>`;
     appendMsg(html, 'bot');
   }, 400);
 });

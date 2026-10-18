@@ -346,6 +346,7 @@ def create_imagen(
     tamano: int,
     descripcion: Optional[str] = None,
     categoria: Optional[str] = None,
+    pregunta_disparadora: Optional[str] = None,
 ) -> Imagen:
     img = Imagen(
         nombre=nombre,
@@ -354,11 +355,52 @@ def create_imagen(
         tamano=tamano,
         descripcion=descripcion,
         categoria=categoria,
+        pregunta_disparadora=pregunta_disparadora,
     )
     db.add(img)
     db.commit()
     db.refresh(img)
     return img
+
+
+def buscar_imagenes_por_pregunta(db: Session, query: str, limite: int = 3) -> List[Imagen]:
+    """
+    Devuelve imágenes cuya pregunta disparadora coincide con la consulta del visitante.
+
+    Se usa coincidencia por palabras clave: si el visitante menciona alguno de los
+    términos configurados en el panel docente, la imagen acompaña la respuesta.
+    """
+    from app.models.models import Imagen as _Imagen
+
+    q_norm = _norm(query)
+    candidatos = (
+        db.query(_Imagen)
+        .filter(_Imagen.pregunta_disparadora.isnot(None))
+        .filter(_Imagen.pregunta_disparadora != "")
+        .all()
+    )
+    ranked = []
+    for img in candidatos:
+        score = 0
+        for term in (img.pregunta_disparadora or "").lower().split(","):
+            term = _norm(term.strip())
+            if len(term) >= 3 and term in q_norm:
+                score += len(term)
+        if score:
+            ranked.append((score, img))
+    ranked.sort(key=lambda t: t[0], reverse=True)
+    return [img for _, img in ranked[:limite]]
+
+
+def _norm(text: str) -> str:
+    """Minúsculas sin acentos, para comparar palabras clave de forma tolerante."""
+    import unicodedata
+
+    text = (text or "").lower()
+    return "".join(
+        ch for ch in unicodedata.normalize("NFD", text)
+        if unicodedata.category(ch) != "Mn"
+    )
 
 
 def delete_imagen(db: Session, img_id: int) -> Optional[Imagen]:

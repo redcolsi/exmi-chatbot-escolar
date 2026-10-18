@@ -2,18 +2,23 @@
 app/routes/chatbot.py — Endpoint principal del chatbot escolar Exmi.
 
 Flujo de cada request:
-  1. Validar que la pregunta no esté vacía.
-  2. RAGService.build_context()  →  busca contexto en BD (KB, docentes, horarios, contactos, documentos).
-  3. GeminiService.generate_response()  →  genera respuesta con IA o fallback.
-  4. crud.create_chat_history()  →  persiste la conversación (siempre, incluso con error).
-  5. Retornar ChatResponse.
+  1. Validar la pregunta y aplicar el límite diario por usuario.
+  2. RAGService.build_context()  →  busca contexto en BD (KB, docentes, horarios,
+     contactos, documentos del Manual de Convivencia).
+  3. Memoria conversacional  →  las últimas 6 interacciones del mismo visitante,
+     para que el bot mantenga el hilo de la conversación.
+  4. GeminiService.generate_response()  →  redacta la respuesta con IA; si falla,
+     cae al respaldo RAG local.
+  5. crud.buscar_imagenes_por_pregunta()  →  si la pregunta coincide con las
+     palabras clave de alguna imagen, se adjunta al respuesta.
+  6. crud.create_chat_history()  →  persiste el intercambio (siempre, incluso si
+     hubo error).
 
-Buenas prácticas aplicadas:
-  - Depends(get_db) para la sesión de BD.
-  - Logging estructurado en cada etapa.
-  - Manejo de errores con respuesta segura al usuario.
-  - El historial se guarda en bloque finally para garantizar persistencia.
-  - Desacoplado de la IA: si GeminiService falla, el RAG aún responde.
+Notas de diseño:
+  - `usuario` es un identificador anónimo por navegador (UUID en localStorage), no un
+    nombre. Evita que dos visitantes compartan historial.
+  - La IA es opcional: el respaldo RAG responde aunque Gemini no esté disponible.
+  - El historial se escribe en `finally` para no perderlo ante un error tardío.
 """
 from __future__ import annotations
 
@@ -28,7 +33,7 @@ import app.crud as crud
 from app.ai.gemini_service import GeminiService
 from app.database.database import get_db
 from app.rag.rag_service import RAGService
-from app.schemas.schemas import ChatRequest, ChatResponse
+from app.schemas.schemas import ChatRequest, ChatResponse, ImagenRespuesta
 
 logger = logging.getLogger(__name__)
 
@@ -38,9 +43,10 @@ router = APIRouter(prefix="/chat", tags=["Chatbot"])
 _rag = RAGService()
 _ai = GeminiService()
 
-# ── Rate limit: 50 preguntas por usuario por día ─────────────────
-# En Vercel serverless el memorio se resetea entre arranques, pero
-# evita abuso masivo en una misma sesión de usuario.
+# Límite diario de preguntas por visitante: protege la cuota de Gemini frente a
+# abuso. Es una safeguard en memoria del proceso, no un límite contable exacto:
+# en Vercel cada función serverless tiene su propia memoria y se reinicia en
+# los arranques en frío. Evita ráfagas abusivas, no sustituye un contador en BD.
 DAILY_LIMIT = 50
 _user_calls: dict[str, list[float]] = defaultdict(list)
 
@@ -89,6 +95,7 @@ async def chat(
 
     usuario = (request.usuario or "anonimo").strip() or "anonimo"
     logger.info("[chatbot] Pregunta de '%s': %s", usuario, pregunta[:120])
+    imagenes: list[ImagenRespuesta] = []
 
     # Rate limit por usuario (protección de cuota Gemini)
     _check_rate_limit(usuario)
@@ -98,11 +105,11 @@ async def chat(
     start: float = time.perf_counter()
 
     try:
-        # ── Paso 1: RAG — recuperar contexto institucional ───────
+        # 1) Recuperar contexto institucional
         context, sources = _rag.build_context(pregunta, db)
         logger.debug("[chatbot] Fuentes RAG: %s", sources or "ninguna")
 
-        # ── Paso 1.5: Memoria conversacional (últimas 6 interacciones) ──
+        # 2) Memoria conversacional
         try:
             recent = db.query(crud.ChatHistory).filter(
                 crud.ChatHistory.usuario == usuario
@@ -117,21 +124,31 @@ async def chat(
             logger.warning("[chatbot] No se pudo cargar historial: %s", hist_err)
             history_text = ""
 
-        # ── Paso 2: Generar respuesta ────────────────────────────
+        # 3) Redactar respuesta con la IA
         # SIEMPRE se llama a Gemini (con o sin contexto RAG).
         respuesta, fuente = await _ai.generate_response(pregunta, context, history_text)
         logger.info("[chatbot] Respuesta generada. Fuente: %s", fuente)
+
+        # Imágenes cuya pregunta disparadora coincide con lo que preguntó el visitante.
+        try:
+            for img in crud.buscar_imagenes_por_pregunta(db, pregunta):
+                imagenes.append(ImagenRespuesta(
+                    id=img.id, ruta=img.ruta, descripcion=img.descripcion
+                ))
+            if imagenes:
+                logger.info("[chatbot] %d imagen(es) adjunta(s)", len(imagenes))
+        except Exception as img_exc:  # noqa: BLE001
+            logger.warning("[chatbot] No se pudo buscar imágenes: %s", img_exc)
 
     except Exception as exc:  # noqa: BLE001
         logger.exception("[chatbot] Error inesperado al procesar pregunta: %s", exc)
         respuesta = _FALLBACK_MSG
         fuente = "Error"
+        imagenes = []
 
     finally:
-        # ── Paso 3: Persistir en historial (SQLite, base principal) ──
+        # El intercambio se registra siempre, incluso si la IA falló.
         elapsed = round(time.perf_counter() - start, 3)
-
-        # SQLite (base principal: local exmi.db o Supabase Postgres en Vercel)
         try:
             crud.create_chat_history(
                 db=db,
@@ -145,5 +162,5 @@ async def chat(
         except Exception as hist_exc:  # noqa: BLE001
             logger.warning("[chatbot] No se pudo guardar en BD: %s", hist_exc)
 
-    return ChatResponse(respuesta=respuesta, fuente=fuente)
+    return ChatResponse(respuesta=respuesta, fuente=fuente, imagenes=imagenes)
 

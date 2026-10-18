@@ -14,7 +14,7 @@ from __future__ import annotations
 import json
 from typing import Any, Dict, List, Optional
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
 import app.crud as crud
@@ -37,7 +37,12 @@ DEFAULT_SECTIONS: Dict[str, bool] = {
     "docentes": True,
     "convivencia": True,
     "contactos": True,
+    "promociones": True,
+    "galeria": True,
 }
+
+# Imágenes que puede ver el público (avatar y cualquier otra quedan fuera).
+PUBLIC_IMAGE_CATEGORIES = ("promociones", "fotografias", "circulares", "comunicados", "horarios")
 
 
 def _pick(obj: Any, fields: List[str]) -> Dict[str, Any]:
@@ -75,6 +80,19 @@ def public_docentes(db: Session = Depends(get_db)):
 def public_contactos(db: Session = Depends(get_db)):
     rows = crud.get_all_contactos(db)
     return [_pick(c, ["id", "cargo", "nombre", "contacto", "horario"]) for c in rows]
+
+
+@router.get("/imagenes", summary="Imágenes públicas por categoría (galería, promociones)")
+def public_imagenes(categoria: Optional[str] = None, db: Session = Depends(get_db)):
+    """Solo devuelve imágenes de categorías públicas; nunca el avatar del bot."""
+    if categoria is not None and categoria not in PUBLIC_IMAGE_CATEGORIES:
+        raise HTTPException(400, f"Categoría no pública. Opciones: {', '.join(PUBLIC_IMAGE_CATEGORIES)}.")
+    rows = crud.get_all_imagenes(db, categoria=categoria)
+    visibles = [
+        r for r in rows
+        if r.categoria != "avatar" and r.categoria in PUBLIC_IMAGE_CATEGORIES
+    ]
+    return [_pick(i, ["id", "nombre_original", "descripcion", "categoria", "ruta"]) for i in visibles]
 
 
 @router.get("/kb", summary="Base de conocimiento (opcionalmente por categoría)")

@@ -45,7 +45,36 @@ logger = logging.getLogger(__name__)
 IS_VERCEL: bool = os.getenv("VERCEL") == "1" or bool(os.getenv("VERCEL_ENV"))
 
 # ── Crear tablas en BD ────────────────────────────────────────
+# `create_all` solo crea tablas ausentes: no añade columnas nuevas a tablas que ya
+# existen. Por eso, tras crearlas, se aplica una migración ligera para que una BD
+# previa siga funcionando al añadir campos nuevos (p. ej. imagenes.pregunta_disparadora).
 Base.metadata.create_all(bind=engine)
+
+
+def _apply_light_migrations() -> None:
+    """Añade columnas faltantes sin perder datos (idempotente y tolerable a fallos)."""
+    additions = [
+        ("imagenes", "pregunta_disparadora", "VARCHAR(500)"),
+    ]
+    from sqlalchemy import inspect, text
+
+    inspector = inspect(engine)
+    existing_tables = set(inspector.get_table_names())
+    for table, column, coltype in additions:
+        if table not in existing_tables:
+            continue
+        cols = {c["name"] for c in inspector.get_columns(table)}
+        if column in cols:
+            continue
+        try:
+            with engine.begin() as conn:
+                conn.execute(text(f"ALTER TABLE {table} ADD COLUMN {column} {coltype}"))
+            logger.info("Migración aplicada: %s.%s", table, column)
+        except Exception as exc:
+            logger.warning("No se pudo añadir %s.%s: %s", table, column, exc)
+
+
+_apply_light_migrations()
 logger.info("Tablas de BD verificadas/creadas. DATABASE_URL=%s", DATABASE_URL)
 
 # ── Crear directorios de uploads ──────────────────────────────

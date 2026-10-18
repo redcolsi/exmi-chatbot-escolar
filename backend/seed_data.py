@@ -204,12 +204,12 @@ def run_seed() -> None:
         if db.query(BotConfig).count() == 0:
             configs = [
                 ("bot_name",     "Exmi"),
-                ("welcome_msg",  "¡Bienvenido al Colegio Albert Einstein! 🎓\nSoy Exmi, tu asistente escolar."),
+                ("welcome_msg",  "¡Bienvenido al Colegio Albert Einstein!\nSoy Exmi, tu asistente escolar."),
                 ("ai_mode",      "ia"),
-                ("accent_color", "#f5a623"),
-                ("bg_color",     "#0a0e17"),
-                ("surface_color","#111827"),
-                ("sections",     '{"horarios": true, "docentes": true, "convivencia": true, "contactos": true}'),
+                ("accent_color", "#c8102e"),
+                ("bg_color",     "#0d1420"),
+                ("surface_color","#131d2e"),
+                ("sections",     '{"horarios": true, "docentes": true, "convivencia": true, "contactos": true, "promociones": true, "galeria": true}'),
             ]
             for clave, valor in configs:
                 db.add(BotConfig(clave=clave, valor=valor))

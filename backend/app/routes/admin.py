@@ -57,7 +57,7 @@ DOCUMENTS_DIR = Path(__file__).resolve().parents[1] / "documents"
 
 MAX_IMAGE_BYTES = 5 * 1024 * 1024
 MAX_JSON_BYTES = 10 * 1024 * 1024
-IMAGE_CATEGORIES = {"horarios", "fotografias", "circulares", "comunicados"}
+IMAGE_CATEGORIES = {"horarios", "fotografias", "circulares", "comunicados", "promociones"}
 AVATAR_CATEGORY = "avatar"
 
 
@@ -326,6 +326,7 @@ async def upload_imagen(
     file: UploadFile = File(...),
     categoria: str = Form("comunicados"),
     descripcion: Optional[str] = Form(None),
+    pregunta_disparadora: Optional[str] = Form(None),
     db: Session = Depends(get_db),
 ):
     if categoria not in IMAGE_CATEGORIES:
@@ -340,6 +341,7 @@ async def upload_imagen(
         tamano=saved["tamano"],
         descripcion=(descripcion or "").strip()[:500] or None,
         categoria=categoria,
+        pregunta_disparadora=(pregunta_disparadora or "").strip()[:500] or None,
     )
     return _dump(img)
 

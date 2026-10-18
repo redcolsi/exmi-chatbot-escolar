@@ -237,9 +237,17 @@ class ChatRequest(BaseModel):
     usuario: str = "anonimo"
 
 
+class ImagenRespuesta(BaseModel):
+    """Imagen que acompaña la respuesta del chatbot."""
+    id: int
+    ruta: str
+    descripcion: Optional[str] = None
+
+
 class ChatResponse(BaseModel):
     respuesta: str
     fuente: str     # "IA+RAG" | "RAG (sin IA)" | "Sin información" | "Error"
+    imagenes: List[ImagenRespuesta] = []   # imágenes cuya pregunta disparadora coincidió
 
 
 # ══════════════════════════════════════════════════════
